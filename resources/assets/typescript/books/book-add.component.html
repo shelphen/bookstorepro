@@ -1,3 +1,9 @@
+<style>
+    .redAlert{
+        color:red;
+    }
+</style>
+
 <div class="row">
 
     <div class="col-sm-8">
@@ -11,25 +17,28 @@
             <form [formGroup]="myForm" novalidate (ngSubmit)="save(myForm.value, myForm.valid)" id="main-contact-form" class="contact-form row" name="contact-form">
 
                 <div class="form-group col-md-6">
-                    <input type="text" name="title" id="title" class="form-control" placeholder="Title" required>
+                    <input type="text" formControlName="title" class="form-control" placeholder="Title">
+                    <small [hidden]="myForm.controls.title.pristine || myForm.controls.title.valid" class="redAlert">Required.</small>
                 </div>
 
                 <div class="form-group col-md-6">
-                    <input type="text" name="author" id="author" class="form-control" placeholder="Author">
+                    <input type="text" formControlName="author" class="form-control" placeholder="Author">
+                    <small [hidden]="myForm.controls.author.pristine || myForm.controls.author.valid" class="redAlert">Required.</small>
                 </div>
 
                 <div class="form-group col-md-12">
-                    <select formControlName="category_id" class="form-control" placeholder="Category" required>
+                    <select formControlName="category_id" class="form-control" placeholder="Category">
                         <option value="">--Select Category--</option>
                         <option value="1">Science</option>
                         <option value="2">Mathematics</option>
                         <option value="3">Religion</option>
                         <option value="4">Technical</option>
                     </select>
+                    <small [hidden]="myForm.controls.category_id.pristine || myForm.controls.category_id.valid" class="redAlert">Required.</small>
                 </div>
 
                 <div class="form-group col-md-12">
-                    <select formControlName="level_id" class="form-control" placeholder="Class" required>
+                    <select formControlName="level_id" class="form-control" placeholder="Class">
                         <option value="">--Select Class--</option>
                         <option value="1">Primary 1</option>
                         <option value="2">Primary 2</option>
@@ -41,14 +50,17 @@
                         <option value="8">JHS 2</option>
                         <option value="9">JHS 3</option>
                     </select>
+                    <small [hidden]="myForm.controls.level_id.pristine || myForm.controls.level_id.valid" class="redAlert">Required.</small>
                 </div>
                 
                 <div class="form-group col-md-6">
                     <input type="number" formControlName="price" class="form-control" placeholder="Price">
+                    <small [hidden]="myForm.controls.price.pristine || myForm.controls.price.valid" class="redAlert">Required.</small>
                 </div>
 
                 <div class="form-group col-md-6">
                     <input type="number" formControlName="sales_price" class="form-control" placeholder="Sales Price">
+                    <small [hidden]="myForm.controls.sales_price.pristine || myForm.controls.sales_price.valid" class="redAlert">Required.</small>
                 </div>
                 
                 <div class="form-group col-md-12">
@@ -75,12 +87,12 @@
 
                         <div class="form-group col-md-6">
                             <input type="number" formControlName="number_of_boxes" class="form-control" placeholder="Number Of Boxes">
-                            <small *ngIf="!myForm.controls.quantityMethod.controls.box.controls.number_of_boxes.valid">Required.</small>
+                            <small [hidden]="myForm.controls.quantityMethod.controls.box.controls.number_of_boxes.pristine || myForm.controls.quantityMethod.controls.box.controls.number_of_boxes.valid" class="redAlert">Required.</small>
                         </div>
                         
                         <div class="form-group col-md-6">
                             <input type="number" formControlName="quantity_in_box" class="form-control" placeholder="Quantity In Box">
-                            <small *ngIf="!myForm.controls.quantityMethod.controls.box.controls.quantity_in_box.valid">Required.</small>
+                            <small [hidden]="myForm.controls.quantityMethod.controls.box.controls.quantity_in_box.pristine || myForm.controls.quantityMethod.controls.box.controls.quantity_in_box.valid" class="redAlert">Required.</small>
                         </div>
 
                     </div>
@@ -89,7 +101,7 @@
 
                         <div class="form-group col-md-6">
                             <input type="number" formControlName="quantity" class="form-control" placeholder="Quantity">
-                            <small *ngIf="!myForm.controls.quantityMethod.controls.stock.controls.quantity.valid">Required.</small>
+                            <small [hidden]="myForm.controls.quantityMethod.controls.stock.controls.quantity.pristine || myForm.controls.quantityMethod.controls.stock.controls.quantity.valid" class="redAlert">Required.</small>
                         </div>
 
                     </div>
@@ -113,7 +125,7 @@
                 </div>
 
                 <div class="form-group col-md-12">
-                    <textarea formControlName="description" required="required" class="form-control" rows="8" placeholder="Book Description"></textarea>
+                    <textarea formControlName="description" class="form-control" rows="8" placeholder="Book Description"></textarea>
                 </div>  
 
                 <div class="form-group col-md-12">

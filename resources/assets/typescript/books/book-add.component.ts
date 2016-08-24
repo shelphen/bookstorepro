@@ -29,18 +29,18 @@ export class BookAddComponent implements OnInit, OnDestroy{
     ngOnInit() {
         // we will initialize our form model here
         this.myForm = this._fb.group({
-                                        title: new FormControl(),
+                                        title: ['', Validators.required],
                                         quantityMethod: this.initQuantityMethodFormGroup(),
-                                        description: new FormControl(),
-                                        category_id: new FormControl(),
-                                        level_id: new FormControl(),
-                                        author: new FormControl(),
-                                        price: new FormControl(),
-                                        sales_price: new FormControl(),
-                                        batch: new FormControl(),
-                                        supplier_name: new FormControl(),
-                                        supplier_location: new FormControl(),
-                                        supplier_contact: new FormControl()
+                                        description: [''],
+                                        category_id: ['', Validators.required],
+                                        level_id: ['', Validators.required],
+                                        author: ['', Validators.required],
+                                        price: ['', Validators.required],
+                                        sales_price: ['', Validators.required],
+                                        batch: [],
+                                        supplier_name: [],
+                                        supplier_location: [],
+                                        supplier_contact: []
                                     });
         // after form model initialization
 
