@@ -6,4 +6,5 @@
     </app>
 
     @include('scripts-import')
+ 
 @stop

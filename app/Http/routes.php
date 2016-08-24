@@ -11,13 +11,14 @@
 |
 */
 
-Route::get('/{any?}', [
-    'uses' => 'ExampleControllers\AngularRoutesController@index',
-    'as' => 'home'
-]);
+// Route::get('/{any?}', [
+//     'uses' => 'ExampleControllers\AngularRoutesController@index',
+//     'as' => 'home'
+// ]);
 
-// API route
-Route::post('/api/upload-file', 'ExampleControllers\UploadController@uploadFile');
+Route::get('/', function(){
+    return view('content');
+});
 
 /*
 |--------------------------------------------------------------------------
@@ -30,6 +31,24 @@ Route::post('/api/upload-file', 'ExampleControllers\UploadController@uploadFile'
 |
 */
 
-Route::group(['middleware' => ['web']], function () {
-    //
+Route::group(['prefix' => 'api'], function () {
+    //Route::get('authenticate', 'AuthenticateController@index');
+    Route::post('authenticate', 'AuthenticateController@authenticate');
+    Route::get('logout/{id}', 'AuthenticateController@logout');
+    Route::resource('authenticate', 'AuthenticateController', ['only' => ['index']]);
 });
+
+// API route
+//Route::post('/api/upload-file', 'ExampleControllers\UploadController@uploadFile');
+
+//Route::group(['middleware' => ['web']], function () {
+    //
+//});
+
+
+
+
+
+Route::auth();
+
+Route::get('/home', 'HomeController@index');

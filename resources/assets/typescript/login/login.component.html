@@ -1,0 +1,41 @@
+<section id="form" style="margin-top:2%"><!--form-->
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-4 col-sm-offset-1">
+                <div class="login-form"><!--login form-->
+
+                    <h2 *ngIf="!loginError">Login to your account</h2>
+                    <div *ngIf="loginError" class="alert alert-danger">{{loginError}}</div>
+                    <form *ngIf="active" (ngSubmit)="onLogin()" #loginForm="ngForm">
+                        <!--
+                        Angular Two Way data Binding []=>property binding to view ()=> view binding to property
+                        <input type="email" placeholder="Email Address" id="email" name="email" [ngModel]="model.email" (ngModelChange)="model.name = $event" required>
+                        -->
+                        
+                        <input type="email" placeholder="Email Address" id="email" name="email" [(ngModel)]="model.email" #email="ngModel" required>
+                        <!--<p>{{email.className}}</p>-->
+                        <div [hidden]="email.valid || email.pristine" class="alert alert-danger">Email is required</div>
+
+                        <input type="password" placeholder="Password" id="password" name="password" [(ngModel)]="model.password" #password="ngModel" required>
+                        <div [hidden]="password.valid || password.pristine" class="alert alert-danger">Password is required</div>
+
+                        <span>
+                            <input type="checkbox" class="checkbox" id="remember" name="remember" [(ngModel)]="model.remember"> 
+                            Keep me signed in
+                        </span>
+
+                        <button type="submit"  class="btn btn-default">Login</button>
+                        <!--<button type="submit"  class="btn btn-default" [disabled]="!loginForm.form.valid">Login</button>-->
+                        <!--<a [routerLink]="['signup']" class="btn btn-default">Signup</a>-->
+                    </form>
+                    
+                </div><!--/login form-->
+            </div>
+            <!--
+            <div class="col-sm-1">
+                <h2 class="or">OR</h2>
+            </div>
+            -->
+        </div>
+    </div>
+</section><!--/form-->

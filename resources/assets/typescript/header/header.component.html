@@ -1,0 +1,57 @@
+<header id="header"><!--header-->
+    <div class="header_top"><!--header_top-->
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="contactinfo">
+                        <ul class="nav navbar-nav collapse navbar-collapse" *ngIf="isLoggedIn">
+                            <li><a [routerLink]="['books/list']" class="active">Home</a></li>
+                            <li class="dropdown"><a [routerLink]="['books']">Books<i class="fa fa-angle-down"></i></a>
+                                <ul role="menu" class="sub-menu">
+                                    <li><a [routerLink]="['books/list']">View Books</a></li>
+                                    <li><a [routerLink]="['books/add/1']">Add Book</a></li>  
+                                </ul>
+                            </li> 
+                            <li class="dropdown"><a href="#">Categories<i class="fa fa-angle-down"></i></a>
+                                <ul role="menu" class="sub-menu">
+                                    <li><a [routerLink]="[]">View Categories</a></li>
+                                    <li><a [routerLink]="[]">Add Category</a></li>
+                                </ul>
+                            </li>
+                            <li class="dropdown"><a href="#">Class<i class="fa fa-angle-down"></i></a>
+                                <ul role="menu" class="sub-menu">
+                                    <li><a [routerLink]="[]">View Class</a></li>
+                                    <li><a [routerLink]="[]">Add Class</a></li>
+                                </ul>
+                            </li>   
+                            <li class="dropdown"><a href="#">Reports<i class="fa fa-angle-down"></i></a>
+                                <ul role="menu" class="sub-menu">
+                                    <li><a [routerLink]="[]">Sales</a></li>
+                                    <li><a [routerLink]="[]">Stock</a></li>
+                                </ul>
+                            </li>
+                            <li><a [routerLink]="[]">Cart</a></li>
+                            <!--
+                            <li><a href="contact-us.html">Contact</a></li>
+                            -->
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-sm-6" *ngIf="isLoggedIn">
+                    <div class="social-icons pull-right">
+                        <ul class="nav navbar-nav">
+                            <!--<li *ngIf="!isLoggedIn"><a [routerLink]="['login']"><i class="fa fa-lock"></i> Login</a></li>-->
+                            <!--<li *ngIf="!isLoggedIn"><a [routerLink]="['signup']"><i class="fa fa-plus"></i> Signup</a></li>-->
+                            <li class="dropdown"><a><i class="fa fa-user"></i> {{ user?.name }}<i class="fa fa-angle-down"></i></a>
+                                <ul role="menu" class="sub-menu">
+                                    <li><a (click)="onLogout()" style="cursor:pointer"><i class="fa fa-eject"></i> Logout</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div><!--/header_top-->
+</header><!--/header-->
+<!--<login (modelChange)="onUserModelChange($event)"></login>-->

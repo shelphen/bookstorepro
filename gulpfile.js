@@ -101,6 +101,8 @@ elixir(function(mix) {
         }
     );
 
+    mix.styles([]);
+
     mix.version([
         'css/app.css',
         'js/app.js',

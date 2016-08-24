@@ -1,0 +1,14 @@
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <td>Title</td>
+            <td>Price</td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let book of books">
+            <td>{{book.title}}</td>
+            <td>{{book.price}}</td>
+        </tr>
+    </tbody>
+</table>
