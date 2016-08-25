@@ -32,7 +32,9 @@ Route::get('/', function(){
 */
 
 Route::group(['prefix' => 'api'], function () {
-    //Route::get('authenticate', 'AuthenticateController@index');
+    Route::post('books', function(Illuminate\Http\Request $request){
+        \Log::info( $request->all() );
+    });
     Route::post('authenticate', 'AuthenticateController@authenticate');
     Route::get('logout/{id}', 'AuthenticateController@logout');
     Route::resource('authenticate', 'AuthenticateController', ['only' => ['index']]);

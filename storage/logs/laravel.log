@@ -1,0 +1,22 @@
+[2016-08-25 00:45:42] local.INFO: array (
+  'title' => 'harry potter',
+  'description' => 'Just for grabs',
+  'category_id' => '1',
+  'level_id' => '1',
+  'author' => 'j k rolling',
+  'price' => '234',
+  'sales_price' => '5666',
+  'batch' => 'sdsarewd',
+  'supplier_name' => 'adinkra',
+  'supplier_location' => 'accra',
+  'supplier_contact' => '024555555555555',
+  'quantity_method' => 'undefined',
+  'image' => 
+  Illuminate\Http\UploadedFile::__set_state(array(
+     'test' => false,
+     'originalName' => 'amazon_banner.png',
+     'mimeType' => 'image/png',
+     'size' => 113412,
+     'error' => 0,
+  )),
+)  

@@ -24,6 +24,8 @@ export interface BookInterface {
 
     supplier_contact: string;
 
+    image: any;
+
     quantity_method: {
         type: string; //must be either 'box' or 'stock'
         box: {

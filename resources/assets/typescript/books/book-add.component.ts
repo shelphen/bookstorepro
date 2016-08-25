@@ -17,13 +17,36 @@ export class BookAddComponent implements OnInit, OnDestroy{
                                         BOX: 'box',
                                         STOCK: 'stock'
                                 };
+
+    private uploadedFile;
     
     constructor(private bookService: BookService, private _fb: FormBuilder){}
 
     save(model: BookInterface, isValid: boolean) {
+
         // call API to save
-        // ...
-        console.log(model, isValid);
+ 
+        if(isValid){
+            
+            if(this.uploadedFile){
+
+                this.bookService.saveBook(model, this.uploadedFile).subscribe( 
+                                    result => { console.log("Book Details Sent", result); },
+                                    error => { console.log('Error SAving Book Details', error); },
+                                     () =>  { console.log("Done..."); }
+                                    );
+                
+            }else{
+                console.log('No image file uploaded');
+                alert("Image file was not uploaded");
+                return;
+            }
+
+        }
+
+        //console.log(model, isValid);
+        //if(this.uploadedFile)console.log(this.uploadedFile); else console.log("No file uploaded");
+
     }
 
     ngOnInit() {
@@ -37,10 +60,11 @@ export class BookAddComponent implements OnInit, OnDestroy{
                                         author: ['', Validators.required],
                                         price: ['', Validators.required],
                                         sales_price: ['', Validators.required],
-                                        batch: [],
-                                        supplier_name: [],
-                                        supplier_location: [],
-                                        supplier_contact: []
+                                        batch: [''],
+                                        supplier_name: [''],
+                                        supplier_location: [''],
+                                        supplier_contact: [''],
+                                        image: ['']
                                     });
         // after form model initialization
 
@@ -103,48 +127,67 @@ export class BookAddComponent implements OnInit, OnDestroy{
     }
 
     subscribePaymentTypeChanges() {
-    // controls
-    const pmCtrl = (<any>this.myForm).controls.quantityMethod;
-    const boxCtrl = pmCtrl.controls.box;
-    const stockCtrl = pmCtrl.controls.stock;
 
-    // initialize value changes stream
-    const changes$ = pmCtrl.controls.type.valueChanges;
+        // controls
+        const pmCtrl = (<any>this.myForm).controls.quantityMethod;
+        const boxCtrl = pmCtrl.controls.box;
+        const stockCtrl = pmCtrl.controls.stock;
 
-    // subscribe to the stream
-    changes$.subscribe(quantityMethodType => {
-        // BOX
-        if (quantityMethodType === this.QUANTITY_METHOD_TYPE.BOX) {
-            // apply validators to each bank fields, retrieve validators from bank model
-            Object.keys(boxCtrl.controls).forEach(key => {
-                boxCtrl.controls[key].setValidators(this.initBoxQuantityModel()[key][1]);
-                boxCtrl.controls[key].updateValueAndValidity();
-            });
+        // initialize value changes stream
+        const changes$ = pmCtrl.controls.type.valueChanges;
 
-            // remove all validators from card fields
-            Object.keys(stockCtrl.controls).forEach(key => {
-                stockCtrl.controls[key].setValidators(null);
-                stockCtrl.controls[key].updateValueAndValidity();
-            });
-        }
+        // subscribe to the stream
+        changes$.subscribe(quantityMethodType => {
+            // BOX
+            if (quantityMethodType === this.QUANTITY_METHOD_TYPE.BOX) {
+                // apply validators to each bank fields, retrieve validators from bank model
+                Object.keys(boxCtrl.controls).forEach(key => {
+                    boxCtrl.controls[key].setValidators(this.initBoxQuantityModel()[key][1]);
+                    boxCtrl.controls[key].updateValueAndValidity();
+                });
 
-        // STOCK
-        if (quantityMethodType === this.QUANTITY_METHOD_TYPE.STOCK) {
-            // remove all validators from bank fields
-            Object.keys(boxCtrl.controls).forEach(key => {
-                boxCtrl.controls[key].setValidators(null);
-                boxCtrl.controls[key].updateValueAndValidity();
-            });
+                // remove all validators from card fields
+                Object.keys(stockCtrl.controls).forEach(key => {
+                    stockCtrl.controls[key].setValidators(null);
+                    stockCtrl.controls[key].updateValueAndValidity();
+                });
+            }
 
-            // apply validators to each card fields, retrieve validators from card model
-            Object.keys(stockCtrl.controls).forEach(key => {
-                stockCtrl.controls[key].setValidators(this.initStockQuantityModel()[key][1]);
-                stockCtrl.controls[key].updateValueAndValidity();
-            });
-        }
+            // STOCK
+            if (quantityMethodType === this.QUANTITY_METHOD_TYPE.STOCK) {
+                // remove all validators from bank fields
+                Object.keys(boxCtrl.controls).forEach(key => {
+                    boxCtrl.controls[key].setValidators(null);
+                    boxCtrl.controls[key].updateValueAndValidity();
+                });
 
-    });
-}
+                // apply validators to each card fields, retrieve validators from card model
+                Object.keys(stockCtrl.controls).forEach(key => {
+                    stockCtrl.controls[key].setValidators(this.initStockQuantityModel()[key][1]);
+                    stockCtrl.controls[key].updateValueAndValidity();
+                });
+            }
+
+        });
+    }
+
+    onChange(event) {
+
+        console.log('onChange');
+        var files = event.srcElement.files;
+        //console.log(files);
+        this.uploadedFile = files;
+        //console.log( (<any>this.myForm).controls);
+        // update quantity method type value
+        //const ctrl: FormControl = (<any>this.myForm).controls.image;
+        //ctrl.updateValue(files);
+
+        //myForm.controls.image
+        //this.service.makeFileRequest('http://localhost:8182/upload', [], files).subscribe(() => {
+        //console.log('sent');
+        //});
+
+    }
 
     ngOnDestroy(){
         //
