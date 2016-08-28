@@ -1,0 +1,23 @@
+
+<h2 class="title text-center">Supplier List</h2>
+<div class="status alert alert-warning" style="" *ngIf="suppLoadError">{{suppLoadError}}</div>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <td>Category</td>
+            <td>Location</td>
+            <td>Phone</td>
+            <td>Number Of Books</td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let supplier of suppliers">
+            <td>{{supplier?.name}}</td>
+            <td>{{supplier?.location}}</td>
+            <td>{{supplier?.contact}}</td>
+            <td>{{supplier?.book_count_relation[0]?.count}}</td>
+        </tr>
+        
+    </tbody>
+</table>

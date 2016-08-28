@@ -1,28 +1,82 @@
 import { Injectable } from '@angular/core';
 import {Observable} from 'rxjs/Rx';
+import 'rxjs/Rx';
+import { AuthService } from '../login/auth.service';
+import { LocalStorage, WEB_STORAGE_PROVIDERS } from "h5webstorage";
+import { Http, Headers, Response, RequestOptions } from '@angular/http';
 
 @Injectable()
 export class BookService{
-    private books = [
-                        {title: 'Harry Potter', price: 23.99},
-                        {title: 'The Lord Of The Rings', price: 45.99},
-                        {title: 'The Da Vinci Code', price: 23.99}
-                    ];
+
+    private booksApiUrl = '/api/books';
+
+    private catApiUrl = '/api/categories'; 
+
+    private levelApiUrl = '/api/levels';
+
+    private suppApiUrl = '/api/suppliers';
+    
+    constructor(private localStorage: LocalStorage, private authService: AuthService, private http: Http){}
+
     getBooks(){
-        return this.books;
+        
+        let headers = new Headers( { 'Content-Type': 'application/json', 'Authorization': 'Bearer '  +  localStorage.getItem('auth_token') } );
+        let options = new RequestOptions({ headers: headers, body: '' });
+
+        return this.http.get(this.booksApiUrl, options)
+                    .map(this.extractData)
+                    .catch(this.handleError);
+    }
+
+    getCategories(){
+
+        let headers = new Headers( { 'Content-Type': 'application/json', 'Authorization': 'Bearer '  +  localStorage.getItem('auth_token') } );
+        let options = new RequestOptions({ headers: headers, body: '' });
+
+        return this.http.get(this.catApiUrl, options)
+                    .map(this.extractData)
+                    .catch(this.handleError);
+
+    }
+
+    getLevels(){
+
+        let headers = new Headers( { 'Content-Type': 'application/json', 'Authorization': 'Bearer '  +  localStorage.getItem('auth_token') } );
+        let options = new RequestOptions({ headers: headers, body: '' });
+
+        return this.http.get(this.levelApiUrl, options)
+                    .map(this.extractData)
+                    .catch(this.handleError);
+
+    }
+
+    getSuppliers(){
+
+        let headers = new Headers( { 'Content-Type': 'application/json', 'Authorization': 'Bearer '  +  localStorage.getItem('auth_token') } );
+        let options = new RequestOptions({ headers: headers, body: '' });
+
+        return this.http.get(this.suppApiUrl, options)
+                    .map(this.extractData)
+                    .catch(this.handleError);
+
     }
 
     saveBook(model, file){
-        //private makeFileRequest (url: string, params: string[], file: File[]): Observable {
 
-            let url = '/api/books';
             return Observable.create(observer => {
-
+                
                 let formData: FormData = new FormData(),
                 xhr: XMLHttpRequest = new XMLHttpRequest();
 
-                //for (let i = 0; i < file.length; i++) {
-                formData.append("image", file[0], file[0].name);
+                if(file){
+                    for (let i = 0; i < file.length; i++) {
+                        formData.append("image", file[i], file[i].name);
+                    }
+                }else{
+                    formData.append("image", "");
+                }
+                
+                formData.append("id", 0 );
                 formData.append("title", model.title );
                 formData.append("description", model.description );
                 formData.append("category_id", model.category_id );
@@ -31,10 +85,11 @@ export class BookService{
                 formData.append("price", model.price );
                 formData.append("sales_price", model.sales_price );
                 formData.append("batch", model.batch );
-                formData.append("supplier_name", model.supplier_name );
-                formData.append("supplier_location", model.supplier_location );
-                formData.append("supplier_contact", model.supplier_contact );
-                formData.append("quantity_method", model.quantity_method );
+                formData.append("supplier_id", model.supplier_id );
+                
+                let qtyType = model.quantityMethod.type;
+                formData.append("quantity", JSON.stringify( model.quantityMethod[qtyType] ) );
+                formData.append("quantity_type", qtyType );
 
                 xhr.onreadystatechange = () => {
                     if (xhr.readyState === 4) {
@@ -53,12 +108,36 @@ export class BookService{
                     //this.progressObserver.next(this.progress);
                 //};
 
-                xhr.open('POST', url, true);
+                xhr.open('POST', this.booksApiUrl , true);
+                let authToken = 'Bearer '  +  localStorage.getItem('auth_token');
+                xhr.setRequestHeader('Authorization', authToken );
                 xhr.send(formData);
 
             });
 
+    }
+
+    private extractData(res: Response) {
+        return res.json() || { };
+    }
+
+    private handleError (error: any) {
+        //if('_body' in error){
+            //if('error' in error._body){
+                if( ['user_not_found','token_expired','token_invalid','token_absent'].indexOf( error._body.error ) ){
+                        this.authService.cleanup();
+                        location.pathname = '/login';
+                        //this.router.navigate(['/login']);
+                }
+            //}
         //}
+        
+        // In a real world app, we might use a remote logging infrastructure // We'd also dig deeper into the error to get a better message
+        let errMsg = (error.message) ? error.message :
+            error.status ? `${error.status} - ${error.statusText}` : 'Server error';
+        console.error(errMsg); // log to console instead
+        return Observable.throw(errMsg);
 
     }
+
 }

@@ -15,12 +15,8 @@ import { BookAddComponent } from './book-add.component';
 
 export class BookComponent implements OnInit, OnDestroy{
 
-    ngOnInit(){
-        //
-    }
+    ngOnInit(){}
 
-    ngOnDestroy(){
-        //
-    }
+    ngOnDestroy(){}
 
 }

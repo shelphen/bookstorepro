@@ -1,0 +1,19 @@
+
+<h2 class="title text-center">Class List</h2>
+<div class="status alert alert-warning" style="" *ngIf="levelLoadError">{{levelLoadError}}</div>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <td>Class</td>
+            <td>Number Of Books</td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let level of levels">
+            <td>{{level?.name}}</td>
+            <td>{{level?.book_count_relation[0]?.count}}</td>
+        </tr>
+        
+    </tbody>
+</table>

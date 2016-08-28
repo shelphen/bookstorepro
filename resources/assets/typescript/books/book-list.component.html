@@ -1,14 +1,43 @@
+
+<h2 class="title text-center">Book List</h2>
+
+<div class="status alert alert-warning" style="" *ngIf="bookLoadError">{{bookLoadError}}</div>
+
 <table class="table table-bordered">
     <thead>
         <tr>
             <td>Title</td>
             <td>Price</td>
+            <td>Sales Price</td>
+            <td>Description</td>
+            <td>Category</td>
+            <td>Class</td>
+            <td>Supplier</td>
+            <td>Quantity</td>
+            <td>Image</td>
+            <td>Action</td>
         </tr>
     </thead>
     <tbody>
         <tr *ngFor="let book of books">
-            <td>{{book.title}}</td>
-            <td>{{book.price}}</td>
+            <td>{{book?.title}}</td>
+            <td>{{book?.price}}</td>
+            <td>{{book?.sales_price}}</td>
+            <td>{{book?.description}}</td>
+            <td>{{book?.category?.name}}</td>
+            <td>{{book?.level?.name}}</td>
+            <td>{{book?.supplier?.name}}</td>
+            <td>{{book?.quantity}}</td>
+            <!--<td><img [src]="book?.image"></td>-->
+            <td><img src="cover_images/book/1/amazon_banner.png" style="width:60px;height:100px"></td>
+            <td>
+                <select class="form-control">
+                    <option>Edit/Delete</option>
+                    <option>Edit</option>
+                    <option>Delete</option>
+                </select>
+            </td>
         </tr>
+        
     </tbody>
 </table>

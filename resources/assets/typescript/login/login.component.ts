@@ -40,7 +40,7 @@ export class LoginComponent{
                                                                         error =>  console.log(error)
                                                                     );
                                          this.authService.setTokenStorage(this.token);
-                                         this.router.navigate(['/books']); 
+                                         this.router.navigate(['/books/list']); 
                                         }
                                     );
 

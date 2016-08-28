@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { BookService } from './books.service';
 import { BookInterface } from './book.interface';
 import { REACTIVE_FORM_DIRECTIVES, FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'book-add',
@@ -11,16 +12,23 @@ import { REACTIVE_FORM_DIRECTIVES, FormGroup, FormBuilder, Validators, FormContr
 
 export class BookAddComponent implements OnInit, OnDestroy{
 
-    public myForm: FormGroup;
+    private myForm: FormGroup;
 
-    public QUANTITY_METHOD_TYPE = {
-                                        BOX: 'box',
-                                        STOCK: 'stock'
-                                };
+    private QUANTITY_METHOD_TYPE = { BOX: 'box',STOCK: 'stock' };
 
     private uploadedFile;
+
+    private categories;
+
+    private levels;
+
+    private suppliers;
+
+    private bookSaveError;
+
+    private bookSaveSuccess;
     
-    constructor(private bookService: BookService, private _fb: FormBuilder){}
+    constructor(private bookService: BookService, private _fb: FormBuilder, private router: Router){}
 
     save(model: BookInterface, isValid: boolean) {
 
@@ -28,20 +36,33 @@ export class BookAddComponent implements OnInit, OnDestroy{
  
         if(isValid){
             
-            if(this.uploadedFile){
+            //if(this.uploadedFile){
 
                 this.bookService.saveBook(model, this.uploadedFile).subscribe( 
-                                    result => { console.log("Book Details Sent", result); },
-                                    error => { console.log('Error SAving Book Details', error); },
-                                     () =>  { console.log("Done..."); }
+                                    result => { 
+                                                this.bookSaveError='';
+                                                this.bookSaveSuccess = result.success;  
+                                            },
+                                    error => { 
+                                                this.bookSaveSuccess='';
+                                                this.bookSaveError = error.error; 
+                                            },
+                                     () =>  { 
+                                                let _dis = this;
+                                                setTimeout(function(){
+                                                    _dis.router.navigate(['/books/list']);
+                                                },2000);
+                                            }
                                     );
                 
-            }else{
-                console.log('No image file uploaded');
-                alert("Image file was not uploaded");
-                return;
-            }
+            // }else{
+            //     console.log('No image file uploaded');
+            //     //alert("Image file was not uploaded");
+            //     return;
+            // }
 
+        }else{
+            this.bookSaveError = 'Please fill all required fields'; 
         }
 
         //console.log(model, isValid);
@@ -50,6 +71,7 @@ export class BookAddComponent implements OnInit, OnDestroy{
     }
 
     ngOnInit() {
+
         // we will initialize our form model here
         this.myForm = this._fb.group({
                                         title: ['', Validators.required],
@@ -61,18 +83,19 @@ export class BookAddComponent implements OnInit, OnDestroy{
                                         price: ['', Validators.required],
                                         sales_price: ['', Validators.required],
                                         batch: [''],
-                                        supplier_name: [''],
-                                        supplier_location: [''],
-                                        supplier_contact: [''],
+                                        supplier_id: [''],
                                         image: ['']
                                     });
-        // after form model initialization
+        
+        this.subscribePaymentTypeChanges();// after form model initialization // subscribe to quantity method type changes
 
-        // subscribe to quantity method type changes
-        this.subscribePaymentTypeChanges();
+        this.setPaymentMethodType(this.QUANTITY_METHOD_TYPE.STOCK);// set default type to STOCK
 
-        // set default type to STOCK
-        this.setPaymentMethodType(this.QUANTITY_METHOD_TYPE.STOCK);
+        this.getBookCategories();
+
+        this.getBookLevels();
+
+        this.getBookSuppliers();
     }
 
     initQuantityMethodFormGroup() {
@@ -98,10 +121,8 @@ export class BookAddComponent implements OnInit, OnDestroy{
 
         const model = {
             //cardNo: ['', [Validators.required, Validators.pattern(cardNoRegex)]],
-            //cardHolder: ['', Validators.required],
-            //expiry: ['', [Validators.required, Validators.pattern(expiryRegex)]]
             number_of_boxes: ['', Validators.required],
-            quantity_in_box: ['', Validators.required]
+            quantity: ['', Validators.required]
         };
 
         return model;
@@ -110,9 +131,6 @@ export class BookAddComponent implements OnInit, OnDestroy{
     initStockQuantityModel() {
         // initialize bank model
         const model = {
-            //accountNo: ['', Validators.required],
-            //accountHolder: ['', Validators.required],
-            //routingNo: ['', Validators.required]
             quantity: ['', Validators.required]
         };
 
@@ -186,6 +204,63 @@ export class BookAddComponent implements OnInit, OnDestroy{
         //this.service.makeFileRequest('http://localhost:8182/upload', [], files).subscribe(() => {
         //console.log('sent');
         //});
+
+    }
+
+    getBookCategories(){
+
+        this.bookService.getCategories()
+                            .subscribe( 
+                                    result => { 
+                                        console.log(result);
+                                        this.categories = result.categories;
+                                    },
+                                    error => {
+                                        console.log(error);
+                                        //this.bookCatErrors = error; 
+                                    },
+                                    () =>  { 
+                                        //console.log('Done Fetching Categories');
+                                        }
+                                );
+    }
+
+    getBookLevels(){
+
+        this.bookService.getLevels()
+                            .subscribe( 
+                                    result => { 
+                                        //console.log(result);
+                                        this.levels = result.levels;
+                                    },
+                                    error => {
+                                        console.log(error);
+                                        //this.bookCatErrors = error; 
+                                    },
+                                    () =>  { 
+                                        //console.log('Done Fetching Levels'); 
+                                        }
+                                );
+
+    }
+
+    getBookSuppliers(){
+
+        this.bookService.getSuppliers()
+                            .subscribe( 
+                                    result => { 
+                                        console.log(result);
+                                        this.suppliers = result.suppliers;
+                                        console.log(this.suppliers);
+                                    },
+                                    error => {
+                                        console.log(error);
+                                        //this.bookCatErrors = error; 
+                                    },
+                                    () =>  { 
+                                        //console.log('Done Fetching Suppliers'); 
+                                        }
+                                );
 
     }
 

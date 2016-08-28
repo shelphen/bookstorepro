@@ -1,0 +1,19 @@
+
+<h2 class="title text-center">Category List</h2>
+<div class="status alert alert-warning" style="" *ngIf="catLoadError">{{catLoadError}}</div>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <td>Category</td>
+            <td>Number Of Books</td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let category of categories">
+            <td>{{category?.name}}</td>
+            <td>{{category?.book_count_relation[0]?.count}}</td>
+        </tr>
+        
+    </tbody>
+</table>

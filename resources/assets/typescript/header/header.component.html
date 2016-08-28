@@ -12,16 +12,22 @@
                                     <li><a [routerLink]="['books/add/1']">Add Book</a></li>  
                                 </ul>
                             </li> 
-                            <li class="dropdown"><a href="#">Categories<i class="fa fa-angle-down"></i></a>
+                            <li class="dropdown"><a [routerLink]="['categories/list']">Categories<i class="fa fa-angle-down"></i></a>
                                 <ul role="menu" class="sub-menu">
-                                    <li><a [routerLink]="[]">View Categories</a></li>
-                                    <li><a [routerLink]="[]">Add Category</a></li>
+                                    <li><a [routerLink]="['categories/list']">View Categories</a></li>
+                                    <li><a [routerLink]="['categories/add/0']">Add Category</a></li>
                                 </ul>
                             </li>
-                            <li class="dropdown"><a href="#">Class<i class="fa fa-angle-down"></i></a>
+                            <li class="dropdown"><a [routerLink]="['suppliers/list']">Suppliers<i class="fa fa-angle-down"></i></a>
                                 <ul role="menu" class="sub-menu">
-                                    <li><a [routerLink]="[]">View Class</a></li>
-                                    <li><a [routerLink]="[]">Add Class</a></li>
+                                    <li><a [routerLink]="['suppliers/list']">View Suppliers</a></li>
+                                    <li><a [routerLink]="['suppliers/add/0']">Add Supplier</a></li>
+                                </ul>
+                            </li> 
+                            <li class="dropdown"><a [routerLink]="['levels/list']">Class<i class="fa fa-angle-down"></i></a>
+                                <ul role="menu" class="sub-menu">
+                                    <li><a [routerLink]="['levels/list']">View Class</a></li>
+                                    <li><a [routerLink]="['levels/add/0']">Add Class</a></li>
                                 </ul>
                             </li>   
                             <li class="dropdown"><a href="#">Reports<i class="fa fa-angle-down"></i></a>

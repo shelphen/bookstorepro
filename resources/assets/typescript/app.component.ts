@@ -13,7 +13,7 @@ import { AuthService } from './login/auth.service';
             <router-outlet></router-outlet>
         </div>
 
-        <bottom-footer *ngIf="isLoggedIn"></bottom-footer>        
+        <!-- <bottom-footer *ngIf="isLoggedIn"></bottom-footer> -->       
     `,
 })
 export class AppComponent {

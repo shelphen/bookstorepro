@@ -1,7 +1,5 @@
 <style>
-    .redAlert{
-        color:red;
-    }
+    .redAlert{color:red;}
 </style>
 
 <div class="row">
@@ -11,7 +9,8 @@
         <div class="contact-form">
 
             <h2 class="title text-center">Add Book</h2>
-            <div class="status alert alert-success" style="display: none"></div>
+            <div class="status alert alert-success" style="" *ngIf="bookSaveSuccess">{{bookSaveSuccess}}</div>
+            <div class="status alert alert-warning" style="" *ngIf="bookSaveError">{{bookSaveError}}</div>
 
             <form [formGroup]="myForm" (ngSubmit)="save(myForm.value, myForm.valid)" id="main-contact-form" class="contact-form row" name="contact-form" novalidate>
 
@@ -28,10 +27,7 @@
                 <div class="form-group col-md-12">
                     <select formControlName="category_id" class="form-control" placeholder="Book Category">
                         <option value="">--Select Category--</option>
-                        <option value="1">Science</option>
-                        <option value="2">Mathematics</option>
-                        <option value="3">Religion</option>
-                        <option value="4">Technical</option>
+                        <option value="{{category.id}}" *ngFor="let category of categories">{{category.name}}</option>
                     </select>
                     <small [hidden]="myForm.controls.category_id.pristine || myForm.controls.category_id.valid" class="redAlert">Required.</small>
                 </div>
@@ -39,15 +35,7 @@
                 <div class="form-group col-md-12">
                     <select formControlName="level_id" class="form-control" placeholder="Class">
                         <option value="">--Select Class--</option>
-                        <option value="1">Primary 1</option>
-                        <option value="2">Primary 2</option>
-                        <option value="3">Primary 3</option>
-                        <option value="4">Primary 4</option>
-                        <option value="5">Primary 5</option>
-                        <option value="6">Primary 6</option>
-                        <option value="7">JHS 1</option>
-                        <option value="8">JHS 2</option>
-                        <option value="9">JHS 3</option>
+                        <option value="{{level.id}}" *ngFor="let level of levels">{{level.name}}</option>
                     </select>
                     <small [hidden]="myForm.controls.level_id.pristine || myForm.controls.level_id.valid" class="redAlert">Required.</small>
                 </div>
@@ -108,8 +96,8 @@
                         </div>
                         
                         <div class="form-group col-md-6">
-                            <input type="number" formControlName="quantity_in_box" class="form-control" placeholder="Quantity In Box">
-                            <small [hidden]="myForm.controls.quantityMethod.controls.box.controls.quantity_in_box.pristine || myForm.controls.quantityMethod.controls.box.controls.quantity_in_box.valid" class="redAlert">Required.</small>
+                            <input type="number" formControlName="quantity" class="form-control" placeholder="Quantity In Box">
+                            <small [hidden]="myForm.controls.quantityMethod.controls.box.controls.quantity.pristine || myForm.controls.quantityMethod.controls.box.controls.quantity.valid" class="redAlert">Required.</small>
                         </div>
 
                     </div>
@@ -129,16 +117,12 @@
                     <input type="text" formControlName="batch" class="form-control" placeholder="Batch Number">
                 </div>
 
-                <div class="form-group col-md-6">
-                    <input type="text" formControlName="supplier_name" class="form-control" placeholder="Supplier name">
-                </div>
-
-                <div class="form-group col-md-6">
-                    <input type="text" formControlName="supplier_location" class="form-control" placeholder="Supplier Location">
-                </div>
-
-                <div class="form-group col-md-6">
-                    <input type="text" formControlName="supplier_contact" class="form-control" placeholder="Supplier Contact">
+                <div class="form-group col-md-12">
+                    <select formControlName="supplier_id" class="form-control" placeholder="Class">
+                        <option value="">--Select Supplier--</option>
+                        <option value="{{supplier.id}}" *ngFor="let supplier of suppliers">{{supplier.name}}</option>
+                    </select>
+                    <!--<small [hidden]="myForm.controls.supplier_id.pristine || myForm.controls.supplier_id.valid" class="redAlert">Required.</small>-->
                 </div>
 
                 <div class="form-group col-md-12">
@@ -147,7 +131,7 @@
 
                 <div class="form-group col-md-6">
                     <input type="file" formControlName="image" formControlName="image" class="form-control" placeholder="Book Image" (change)="onChange($event)">
-                    <small [hidden]="myForm.controls.image.pristine || myForm.controls.image.valid" class="redAlert">Required.</small>
+                    <!--<small [hidden]="myForm.controls.image.pristine || myForm.controls.image.valid" class="redAlert">Required.</small>-->
                 </div>  
 
                 <div class="form-group col-md-12">
