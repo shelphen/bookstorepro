@@ -1,7 +1,32 @@
+<style>
+    .cpointer{
+        cursor:pointer;
+    }
+</style>
+
 
 <h2 class="title text-center">Book List</h2>
 
 <div class="status alert alert-warning" style="" *ngIf="bookLoadError">{{bookLoadError}}</div>
+
+<!-- pager -->
+<ul *ngIf="pager.pages?.length" class="pagination" style="float:right">
+    <li [ngClass]="{disabled:pager.currentPage === 1}">
+        <a class="cpointer" (click)="setPage(1)">First</a>
+    </li>
+    <li [ngClass]="{disabled:pager.currentPage === 1}">
+        <a class="cpointer" (click)="setPage(pager.currentPage - 1)">Previous</a>
+    </li>
+    <li *ngFor="let page of pager.pages" [ngClass]="{active:pager.currentPage === page}">
+        <a class="cpointer" (click)="setPage(page)">{{page}}</a>
+    </li>
+    <li [ngClass]="{disabled:pager.currentPage === pager.totalPages}">
+        <a class="cpointer" (click)="setPage(pager.currentPage + 1)">Next</a>
+    </li>
+    <li [ngClass]="{disabled:pager.currentPage === pager.totalPages}">
+        <a class="cpointer" (click)="setPage(pager.totalPages)">Last</a>
+    </li>
+</ul>
 
 <table class="table table-bordered">
     <thead>
@@ -19,7 +44,8 @@
         </tr>
     </thead>
     <tbody>
-        <tr *ngFor="let book of books">
+        
+        <tr *ngFor="let book of pagedItems">
             <td>{{book?.title}}</td>
             <td>{{book?.price}}</td>
             <td>{{book?.sales_price}}</td>
@@ -31,13 +57,31 @@
             <!--<td><img [src]="book?.image"></td>-->
             <td><img src="cover_images/book/1/amazon_banner.png" style="width:60px;height:100px"></td>
             <td>
-                <select class="form-control">
+                <select class="form-control" (click)="onClick()">
                     <option>Edit/Delete</option>
                     <option>Edit</option>
                     <option>Delete</option>
                 </select>
             </td>
         </tr>
-        
     </tbody>
 </table>
+
+<!-- pager -->
+<ul *ngIf="pager.pages?.length" class="pagination" style="float:right">
+    <li [ngClass]="{disabled:pager.currentPage === 1}">
+        <a class="cpointer" (click)="setPage(1)">First</a>
+    </li>
+    <li [ngClass]="{disabled:pager.currentPage === 1}">
+        <a class="cpointer" (click)="setPage(pager.currentPage - 1)">Previous</a>
+    </li>
+    <li *ngFor="let page of pager.pages" [ngClass]="{active:pager.currentPage === page}">
+        <a class="cpointer" (click)="setPage(page)">{{page}}</a>
+    </li>
+    <li [ngClass]="{disabled:pager.currentPage === pager.totalPages}">
+        <a class="cpointer" (click)="setPage(pager.currentPage + 1)">Next</a>
+    </li>
+    <li [ngClass]="{disabled:pager.currentPage === pager.totalPages}">
+        <a class="cpointer" (click)="setPage(pager.totalPages)">Last</a>
+    </li>
+</ul>

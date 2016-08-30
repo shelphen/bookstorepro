@@ -4,6 +4,8 @@ import { FormsModule }   from '@angular/forms';
 import {LocalStorage, WEB_STORAGE_PROVIDERS} from "h5webstorage";
 import { Http, Headers, HTTP_PROVIDERS, HttpModule, JsonpModule } from '@angular/http';
 import { REACTIVE_FORM_DIRECTIVES, FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
+import { ModalModule } from 'angular2-modal';
+import { BootstrapModalModule } from 'angular2-modal/plugins/bootstrap';
 
 import { AppComponent } from './app.component';
 import { BookComponent } from './books/book.component';
@@ -30,10 +32,11 @@ import { CategoryService } from './categories/category.service';
 import { SupplierService } from './suppliers/supplier.service';
 import { LevelService } from './levels/level.service';
 import { routing } from './app.routing';
+import { PagerService } from './services/pagination-service';
 
 
 @NgModule({
-    imports: [ BrowserModule, FormsModule, routing, HttpModule, JsonpModule ],
+    imports: [ BrowserModule, FormsModule, routing, HttpModule, JsonpModule, BootstrapModalModule, ModalModule.forRoot() ],
     declarations: [ 
                         AppComponent, BookListComponent, HeaderComponent, FooterComponent, 
                         LoginComponent, SignUpComponent, BookAddComponent, BookComponent, 
@@ -43,7 +46,7 @@ import { routing } from './app.routing';
                 ],
     providers:[ 
                         BookService, CategoryService, SupplierService, LevelService, LoginGuard, AuthService, 
-                        WEB_STORAGE_PROVIDERS, HTTP_PROVIDERS, FormBuilder 
+                        WEB_STORAGE_PROVIDERS, HTTP_PROVIDERS, FormBuilder, PagerService 
                 ],
     bootstrap: [ AppComponent ]
 })

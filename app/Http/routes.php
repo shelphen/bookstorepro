@@ -32,13 +32,16 @@ Route::get('/', function(){
 */
 
 Route::group(['prefix' => 'api'], function () {
+
     Route::resource('books', 'BookController');
     Route::resource('suppliers', 'SupplierController');
     Route::resource('categories', 'CategoryController');
     Route::resource('levels', 'LevelController');
-    Route::post('authenticate', 'AuthenticateController@authenticate');
+
     Route::get('logout/{id}', 'AuthenticateController@logout');
+    Route::post('authenticate', 'AuthenticateController@authenticate');
     Route::resource('authenticate', 'AuthenticateController', ['only' => ['index']]);
+    
 });
 
 // API route
