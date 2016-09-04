@@ -15,6 +15,8 @@ export class BookService{
     private levelApiUrl = '/api/levels';
 
     private suppApiUrl = '/api/suppliers';
+
+    private editBook;
     
     constructor(private localStorage: LocalStorage, private authService: AuthService, private http: Http){}
 
@@ -115,6 +117,14 @@ export class BookService{
 
             });
 
+    }
+
+    setEditBook(book){
+        this.editBook = book;
+    }
+
+    getEditBook(){
+        return this.editBook;
     }
 
     private extractData(res: Response) {

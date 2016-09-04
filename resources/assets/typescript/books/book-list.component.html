@@ -5,83 +5,100 @@
 </style>
 
 
-<h2 class="title text-center">Book List</h2>
+<section id="cart_items" [@flyInOut]="'in'">
+    <div class="container">
 
-<div class="status alert alert-warning" style="" *ngIf="bookLoadError">{{bookLoadError}}</div>
+        <div class="status alert alert-warning" style="" *ngIf="bookLoadError">{{bookLoadError}}</div>
 
-<!-- pager -->
-<ul *ngIf="pager.pages?.length" class="pagination" style="float:right">
-    <li [ngClass]="{disabled:pager.currentPage === 1}">
-        <a class="cpointer" (click)="setPage(1)">First</a>
-    </li>
-    <li [ngClass]="{disabled:pager.currentPage === 1}">
-        <a class="cpointer" (click)="setPage(pager.currentPage - 1)">Previous</a>
-    </li>
-    <li *ngFor="let page of pager.pages" [ngClass]="{active:pager.currentPage === page}">
-        <a class="cpointer" (click)="setPage(page)">{{page}}</a>
-    </li>
-    <li [ngClass]="{disabled:pager.currentPage === pager.totalPages}">
-        <a class="cpointer" (click)="setPage(pager.currentPage + 1)">Next</a>
-    </li>
-    <li [ngClass]="{disabled:pager.currentPage === pager.totalPages}">
-        <a class="cpointer" (click)="setPage(pager.totalPages)">Last</a>
-    </li>
-</ul>
+        <h2 class="title text-center">Book List</h2>
 
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <td>Title</td>
-            <td>Price</td>
-            <td>Sales Price</td>
-            <td>Description</td>
-            <td>Category</td>
-            <td>Class</td>
-            <td>Supplier</td>
-            <td>Quantity</td>
-            <td>Image</td>
-            <td>Action</td>
-        </tr>
-    </thead>
-    <tbody>
-        
-        <tr *ngFor="let book of pagedItems">
-            <td>{{book?.title}}</td>
-            <td>{{book?.price}}</td>
-            <td>{{book?.sales_price}}</td>
-            <td>{{book?.description}}</td>
-            <td>{{book?.category?.name}}</td>
-            <td>{{book?.level?.name}}</td>
-            <td>{{book?.supplier?.name}}</td>
-            <td>{{book?.quantity}}</td>
-            <!--<td><img [src]="book?.image"></td>-->
-            <td><img src="cover_images/book/1/amazon_banner.png" style="width:60px;height:100px"></td>
-            <td>
-                <select class="form-control" (click)="onClick()">
-                    <option>Edit/Delete</option>
-                    <option>Edit</option>
-                    <option>Delete</option>
-                </select>
-            </td>
-        </tr>
-    </tbody>
-</table>
+        <div class="table-responsive cart_info" style="border:none !important">
 
-<!-- pager -->
-<ul *ngIf="pager.pages?.length" class="pagination" style="float:right">
-    <li [ngClass]="{disabled:pager.currentPage === 1}">
-        <a class="cpointer" (click)="setPage(1)">First</a>
-    </li>
-    <li [ngClass]="{disabled:pager.currentPage === 1}">
-        <a class="cpointer" (click)="setPage(pager.currentPage - 1)">Previous</a>
-    </li>
-    <li *ngFor="let page of pager.pages" [ngClass]="{active:pager.currentPage === page}">
-        <a class="cpointer" (click)="setPage(page)">{{page}}</a>
-    </li>
-    <li [ngClass]="{disabled:pager.currentPage === pager.totalPages}">
-        <a class="cpointer" (click)="setPage(pager.currentPage + 1)">Next</a>
-    </li>
-    <li [ngClass]="{disabled:pager.currentPage === pager.totalPages}">
-        <a class="cpointer" (click)="setPage(pager.totalPages)">Last</a>
-    </li>
-</ul>
+            <!-- pager -->
+            <ul *ngIf="pager.pages?.length" class="pagination" style="float:right">
+                <li [ngClass]="{disabled:pager.currentPage === 1}">
+                    <a class="cpointer" (click)="setPage(1)">First</a>
+                </li>
+                <li [ngClass]="{disabled:pager.currentPage === 1}">
+                    <a class="cpointer" (click)="setPage(pager.currentPage - 1)">Previous</a>
+                </li>
+                <li *ngFor="let page of pager.pages" [ngClass]="{active:pager.currentPage === page}">
+                    <a class="cpointer" (click)="setPage(page)">{{page}}</a>
+                </li>
+                <li [ngClass]="{disabled:pager.currentPage === pager.totalPages}">
+                    <a class="cpointer" (click)="setPage(pager.currentPage + 1)">Next</a>
+                </li>
+                <li [ngClass]="{disabled:pager.currentPage === pager.totalPages}">
+                    <a class="cpointer" (click)="setPage(pager.totalPages)">Last</a>
+                </li>
+            </ul>
+
+            <select class="form-control" [(ngModel)]="itemPerPage" (click)="setItemPerPage()"  style="width:20%;float:left">
+                <option value="5">5 items</option>
+                <option value="10">10 items</option>
+                <option value="15">15 items</option>
+                <option value="25">25 items</option>
+                <option value="50">50 items</option>
+            </select>
+
+            <table class="table table-condensed">
+                <thead>
+                    <tr class="cart_menu">
+                        <td>Title</td>
+                        <td>Price</td>
+                        <td>Sales Price</td>
+                        <td>Description</td>
+                        <td>Category</td>
+                        <td>Class</td>
+                        <td>Supplier</td>
+                        <td>Quantity</td>
+                        <td>Image</td>
+                        <td>Action</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let book of pagedItems">
+                        <td class="">{{book?.title}}</td>
+                        <td class="">{{book?.price}}</td>
+                        <td class="">{{book?.sales_price}}</td>
+                        <td class="">{{book?.description}}</td>
+                        <td class="">{{book?.category?.name}}</td>
+                        <td class="">{{book?.level?.name}}</td>
+                        <td class="">{{book?.supplier?.name}}</td>
+                        <td class="">{{book?.quantity}}</td>
+                        <!--<td><img [src]="book?.image"></td>-->
+                        <td class=""><img src="cover_images/book/1/amazon_banner.png" style="width:60px;height:100px"></td>
+                        <td class="">
+                            <select class="form-control" [(ngModel)]="actionValue[book?.id]" (click)="onClick(book?.id)">
+                                <option value="">Edit/Delete</option>
+                                <option value="edit">Edit</option>
+                                <option value="delete">Delete</option>
+                            </select>
+                        </td>
+                    </tr>
+
+                </tbody>
+            </table>
+
+            <!-- pager -->
+            <ul *ngIf="pager.pages?.length" class="pagination" style="float:right">
+                <li [ngClass]="{disabled:pager.currentPage === 1}">
+                    <a class="cpointer" (click)="setPage(1)">First</a>
+                </li>
+                <li [ngClass]="{disabled:pager.currentPage === 1}">
+                    <a class="cpointer" (click)="setPage(pager.currentPage - 1)">Previous</a>
+                </li>
+                <li *ngFor="let page of pager.pages" [ngClass]="{active:pager.currentPage === page}">
+                    <a class="cpointer" (click)="setPage(page)">{{page}}</a>
+                </li>
+                <li [ngClass]="{disabled:pager.currentPage === pager.totalPages}">
+                    <a class="cpointer" (click)="setPage(pager.currentPage + 1)">Next</a>
+                </li>
+                <li [ngClass]="{disabled:pager.currentPage === pager.totalPages}">
+                    <a class="cpointer" (click)="setPage(pager.totalPages)">Last</a>
+                </li>
+            </ul>
+
+        </div>
+    </div>
+</section> <!--/#cart_items-->

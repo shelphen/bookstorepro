@@ -61,9 +61,14 @@ class CategoryController extends Controller
     public function store(CategoryRequest $request)
     {
         try{
+                
+                if( Category::updateOrCreate( ['id' => $request->get('id')], $request->all() ) ){
+                    if($request->get('id') > 0) $message = 'Category edited successfully...'; else $message = 'Category saved successfully...';
 
-                if(with(new Category)->newInstance($request->all(), $request->get('id') )->save()) return response()->json(["success" => "Category saved successfully..."], 200);
-                    else return response()->json(["error" => "Failed to save category..."], 401);
+                    return response()->json(["success" => $message], 200);
+                }
+
+                return response()->json(["error" => "Failed to save category..."], 401);
 
         }catch(\Exception $e) {
             Log::error("Exception caught, filename: " . $e->getFile() . " on line: " . $e->getLine());

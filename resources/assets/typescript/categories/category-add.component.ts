@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CategoryService } from './category.service';
 import { CategoryInterface } from './category.interface';
 import { REACTIVE_FORM_DIRECTIVES, FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
     selector: 'category-add',
@@ -19,16 +19,18 @@ export class CategoryAddComponent implements OnInit, OnDestroy{
     private catSaveError;
 
     private catSaveSuccess;
+
+    private selectedCatId;
     
-    constructor(private catService: CategoryService, private _fb: FormBuilder, private router: Router){}
+    constructor(private catService: CategoryService, private _fb: FormBuilder, private router: Router, private activeRoute : ActivatedRoute){}
 
     save(model: CategoryInterface, isValid: boolean) {
-
+        
         // call API to save
         if(isValid){
             this.catSaveError='';
 
-            this.catService.saveCategory(model).subscribe( 
+            this.catService.saveCategory(model, this.selectedCatId).subscribe( 
                                 result => { 
                                             this.catSaveError='';
                                             this.catSaveSuccess = result.success;  
@@ -38,7 +40,6 @@ export class CategoryAddComponent implements OnInit, OnDestroy{
                                             this.catSaveError = error; 
                                         },
                                     () =>  { 
-                                            console.log("Done Saving Category..."); 
                                             let _dis = this;
                                             setTimeout(function(){
                                                _dis.router.navigate(['/categories/list']);
@@ -54,11 +55,36 @@ export class CategoryAddComponent implements OnInit, OnDestroy{
     }
 
     ngOnInit() {
+        
+         this.activeRoute.params.subscribe(params => this.selectedCatId = params['id'] );
 
-        // we will initialize our form model here
-        this.myForm = this._fb.group({
+         if(this.selectedCatId > 0) {
+             
+             let catEditDetails: any = this.catService.getCatEditDetails();
+             if(catEditDetails){
+
+                // we will initialize our form model here
+                this.myForm = this._fb.group({
+                                        name: [catEditDetails.name, Validators.required]
+                                    });
+
+                this.catService.setCatEditDetails(undefined);
+             }else{
+                 // we will initialize our form model here
+                this.myForm = this._fb.group({
                                         name: ['', Validators.required]
                                     });
+             }
+
+        }else{
+
+            // we will initialize our form model here
+            this.myForm = this._fb.group({
+                                    name: ['', Validators.required]
+                                });
+        }
+
+         
     }
 
     ngOnDestroy(){

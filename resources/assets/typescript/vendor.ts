@@ -17,3 +17,6 @@ import '@angular/upgrade';
 
 // RxJS
 import 'rxjs';
+
+import 'jquery';
+import 'bootstrap/dist/js/bootstrap';

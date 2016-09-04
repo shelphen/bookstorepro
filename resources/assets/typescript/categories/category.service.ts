@@ -9,6 +9,8 @@ import { Http, Headers, Response, RequestOptions } from '@angular/http';
 export class CategoryService{
 
     private catApiUrl = '/api/categories';
+
+    private catEditDetails: any;
     
     constructor(private localStorage: LocalStorage, private authService: AuthService, private http: Http){}
 
@@ -23,17 +25,31 @@ export class CategoryService{
                     .catch(this.handleError);
     }
 
-    saveCategory(catDetails): Observable<any>{
+    saveCategory(catDetails, catId): Observable<any>{
 
-        let body = JSON.stringify( catDetails );
-        let headers = new Headers( { 'Content-Type': 'application/json', 'Authorization': 'Bearer '  +  localStorage.getItem('auth_token') } );
-        let options = new RequestOptions({ headers: headers });
+            //catDetails.append({id: catId});
+            console.log(catDetails);
+            console.log(catId);
+            
+            catDetails['id'] = catId;
 
-        return this.http.post( this.catApiUrl, body, options )
-                      .map(this.extractData)
-                      .catch(this.handleError);
-      
-  }
+            let body = JSON.stringify( catDetails );
+            let headers = new Headers( { 'Content-Type': 'application/json', 'Authorization': 'Bearer '  +  localStorage.getItem('auth_token') } );
+            let options = new RequestOptions({ headers: headers });
+
+            return this.http.post( this.catApiUrl, body, options )
+                        .map(this.extractData)
+                        .catch(this.handleError);
+        
+    }
+
+    setCatEditDetails(catDetails: any){
+        this.catEditDetails = catDetails;
+    }
+
+    getCatEditDetails(){
+        return this.catEditDetails;
+    }
 
     private extractData(res: Response) {
         return res.json() || { };

@@ -23,6 +23,8 @@ elixir(function(mix) {
      **/
     var bootstrapPath = 'node_modules/bootstrap-less';
 
+    //var jQueryPath = 'node_modules/jquery';
+
     mix.copy(bootstrapPath, 'resources/vendor/bootstrap/');
     mix.copy(bootstrapPath + '/fonts', 'public/fonts');
 
@@ -31,10 +33,22 @@ elixir(function(mix) {
      **/
     mix.copy('node_modules/jquery/dist/jquery.min.js', 'public/js/jquery');
 
+    //mix.copy('node_modules/ng2-bootstrap/bundles/ng2-bootstrap.min.js', 'public/js/bootstrap');
+
+    /**
+     * NG2 BS3 Modal
+     **/
+    mix.copy('node_modules/ng2-bs3-modal/bundles/ng2-bs3-modal.js', 'public/js');
+
     /**
      * Less
      **/
     mix.less('app.less');
+
+    //mix.scripts([
+        //jQueryPath + "dist/jquery.min.js",
+        //bootstrapPath + "js/bootstrap.js"
+    //], './', 'public/js/app.js');
 
     /**
      * Scripts webpack bundling and copying
@@ -63,6 +77,10 @@ elixir(function(mix) {
                     {
                         test: /\.html$/,
                         loader: 'raw-loader'
+                    },
+                    {
+                        test: /bootstrap-sass[\/\\]assets[\/\\]javascripts[\/\\]/,
+                        loader: 'imports?jQuery=jquery'
                     }
                 ]
             },
@@ -93,7 +111,12 @@ elixir(function(mix) {
                     sourceMap: true,
                     minimize: true,
                     mangle: false
-                })
+                }),
+                new webpack.ProvidePlugin({
+                    jQuery: 'jquery',
+                    $: 'jquery',
+                    jquery: 'jquery'
+                }),
             ],
             node: {
                 global: 'window'
@@ -103,6 +126,12 @@ elixir(function(mix) {
 
     mix.styles([]);
 
+    // mix.scripts([
+    //         "./node_modules/jquery/dist/jquery.min.js",
+    //         "./node_modules/bootstrap-less/js/bootstrap.js"
+    //     ],  'public/js/scripts.js');
+         //]);
+    
     mix.version([
         'css/app.css',
         'js/app.js',
