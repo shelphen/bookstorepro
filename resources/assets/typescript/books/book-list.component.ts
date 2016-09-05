@@ -1,9 +1,11 @@
-import { Component, OnInit, OnDestroy, ViewContainerRef, ViewEncapsulation, trigger, state, style, animate, transition } from '@angular/core';
+import { Component, OnInit, ViewChild, OnDestroy, ViewContainerRef, ViewEncapsulation, trigger, state, style, animate, transition } from '@angular/core';
 import { BookService } from './books.service';
 import * as _ from 'underscore';
 import { PagerService } from '../services/pagination-service';
 import { Overlay } from 'angular2-modal';
-import { Modal } from 'angular2-modal/plugins/bootstrap';
+//import { Modal } from 'angular2-modal/plugins/bootstrap';
+import { MODAL_DIRECTIVES, ModalComponent } from 'ng2-bs3-modal/ng2-bs3-modal';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'book-list',
@@ -42,7 +44,13 @@ export class BookListComponent implements OnInit, OnDestroy{
 
     private itemPerPage = 5;
 
-    constructor(private bookService: BookService, private pagerService: PagerService, overlay: Overlay, vcRef: ViewContainerRef, public modal: Modal){
+    private selectedBookId;
+
+    @ViewChild('modal1') modal1: ModalComponent;
+
+    @ViewChild('modal2') modal2: ModalComponent;
+
+    constructor(private bookService: BookService, private pagerService: PagerService, overlay: Overlay, vcRef: ViewContainerRef, private router: Router){
         overlay.defaultViewContainer = vcRef;
     }
 
@@ -82,49 +90,43 @@ export class BookListComponent implements OnInit, OnDestroy{
                                             );
     }
 
-    onClick(bookId) {
-
+  open(bookId) {
         if(!this.actionValue[bookId]) return;
+        this.selectedBookId = bookId;
+        if(this.actionValue[bookId]=='delete') this.modal1.open('lg');
+        if(this.actionValue[bookId]=='edit') this.modal2.open('lg');
+    }
 
-        if(this.actionValue[bookId] === 'edit'){
+    removeBook(){
+        this.bookService.removeBook(this.selectedBookId)
+                                .subscribe( 
+                                                result => { 
+                                                    console.log(result);
+                                                    //this.catLoadError = '';
+                                                    //this.catRemoveSuccess=result.success;
+                                                },
+                                                error => {
+                                                    console.log(error);
+                                                    //this.catLoadError = error;
+                                                },
+                                                () =>  { 
+                                                    console.log('Done Deleting Book'); 
+                                                    this.getBooks();
+                                                    }
+                                            );
+    }
 
-            let title = 'Do you want to edit the selected product ?';
-            let body = ``;
+    editBook(){
 
-            this.generateModalObject(title,body).open();
+        let selBookId = this.selectedBookId;
+        let dis = this;
+        _.each(this.books, function( book: any ) { 
+            if( book.id === selBookId ) dis.bookService.setBookEditDetails(book);
+        }, selBookId);
 
-        }else if(this.actionValue[bookId] === 'delete'){
-
-            let title = 'Do you want to delete the selected product ?';
-            let body = ``;
-            
-            this.generateModalObject(title,body).open();
-
-        }
-
-        // this.modal.alert()
-        //     .size('lg')
-        //     .showClose(true)
-        //     .title('A simple Alert style modal window')
-        //     .body(`
-        //         <h4>Alert is a classic (title/body/footer) 1 button modal window that 
-        //         does not block.</h4>
-        //         <b>Configuration:</b>
-        //         <ul>
-        //             <li>Non blocking (click anywhere outside to dismiss)</li>
-        //             <li>Size large</li>
-        //             <li>Dismissed with default keyboard key (ESC)</li>
-        //             <li>Close wth button click</li>
-        //             <li>HTML content</li>
-        //         </ul>`)
-        //     .open();
-  }
-
-  private generateModalObject(title: string, body: string, showClose:boolean = true, size: string = 'lg'){
-
-       return this.modal.alert().size( size ).showClose( showClose ).title( title ).body( body );
-
-  }
+        let route = '/books/add/' + this.selectedBookId;
+        this.router.navigate([ route ]); 
+    }
 
     ngOnDestroy(){
         this.books = [];

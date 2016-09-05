@@ -9,6 +9,8 @@ import { Http, Headers, Response, RequestOptions } from '@angular/http';
 export class SupplierService{
 
     private suppApiUrl = '/api/suppliers';
+
+    private supEditDetails;
     
     constructor(private localStorage: LocalStorage, private authService: AuthService, private http: Http){}
 
@@ -34,6 +36,25 @@ export class SupplierService{
                       .catch(this.handleError);
       
   }
+
+  removeSupplier(supId): Observable<any>{
+        
+        let headers = new Headers( { 'Content-Type': 'application/json', 'Authorization': 'Bearer '  +  localStorage.getItem('auth_token') } );
+        let options = new RequestOptions({ headers: headers, body: '' });
+        //
+        return this.http.delete(this.suppApiUrl+'/'+supId, options)
+                    .map(this.extractData)
+                    .catch(this.handleError);
+
+    }
+
+    setSupEditDetails(supDetails: any){
+        this.supEditDetails = supDetails;
+    }
+
+    getSupEditDetails(){
+        return this.supEditDetails;
+    }
 
     private extractData(res: Response) {
         return res.json() || { };

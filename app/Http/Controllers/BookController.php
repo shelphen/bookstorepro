@@ -100,8 +100,8 @@ class BookController extends Controller
                         $inputs['number_of_boxes'] = $number_of_boxes;
                         $inputs['image'] = '';
 
-                        //$bookId  = $this->book->updateOrCreate( ['id' => $request->get('id') ], $inputs )->id;
-                        $isSaved = with(new Book)->newInstance($inputs, $request->get('id') )->save();
+                        //$isSaved = with(new Book)->newInstance($inputs, $request->get('id') )->save();
+                        Book::updateOrCreate( ['id' => $request->get('id')], $inputs );
 
                         if($request->get('image') != ''){
 
@@ -187,6 +187,17 @@ class BookController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try{
+
+                if( $this->book->where('id', $id)->delete() ) return response()->json(['success' => 'Book removed successfully...' ], 200);
+
+                return response()->json(['error' => 'Book delete failed...'], 400);
+
+        }catch (Exception $e)
+        {
+                Log::error("Exception caught, filename: " . $e->getFile() . " on line: " . $e->getLine());
+                Log::error($e->getMessage());
+                return response()->json(['error' => 'Something unusual happened' ], 500);
+        }
     }
 }

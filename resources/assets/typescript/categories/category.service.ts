@@ -30,7 +30,7 @@ export class CategoryService{
             //catDetails.append({id: catId});
             console.log(catDetails);
             console.log(catId);
-            
+
             catDetails['id'] = catId;
 
             let body = JSON.stringify( catDetails );
@@ -41,6 +41,17 @@ export class CategoryService{
                         .map(this.extractData)
                         .catch(this.handleError);
         
+    }
+
+    removeCategory(catId): Observable<any>{
+        
+        let headers = new Headers( { 'Content-Type': 'application/json', 'Authorization': 'Bearer '  +  localStorage.getItem('auth_token') } );
+        let options = new RequestOptions({ headers: headers, body: '' });
+        //
+        return this.http.delete(this.catApiUrl+'/'+catId, options)
+                    .map(this.extractData)
+                    .catch(this.handleError);
+
     }
 
     setCatEditDetails(catDetails: any){

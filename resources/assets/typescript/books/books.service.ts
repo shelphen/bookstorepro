@@ -16,7 +16,7 @@ export class BookService{
 
     private suppApiUrl = '/api/suppliers';
 
-    private editBook;
+    private bookEditDetails;
     
     constructor(private localStorage: LocalStorage, private authService: AuthService, private http: Http){}
 
@@ -63,7 +63,7 @@ export class BookService{
 
     }
 
-    saveBook(model, file){
+    saveBook(model, bookId, file){
 
             return Observable.create(observer => {
                 
@@ -78,7 +78,7 @@ export class BookService{
                     formData.append("image", "");
                 }
                 
-                formData.append("id", 0 );
+                formData.append("id", bookId );
                 formData.append("title", model.title );
                 formData.append("description", model.description );
                 formData.append("category_id", model.category_id );
@@ -119,12 +119,23 @@ export class BookService{
 
     }
 
-    setEditBook(book){
-        this.editBook = book;
+    setBookEditDetails(bookDetails: any){
+        this.bookEditDetails = bookDetails;
     }
 
-    getEditBook(){
-        return this.editBook;
+    getBookEditDetails(){
+        return this.bookEditDetails;
+    }
+
+    removeBook(bookId): Observable<any>{
+        
+        let headers = new Headers( { 'Content-Type': 'application/json', 'Authorization': 'Bearer '  +  localStorage.getItem('auth_token') } );
+        let options = new RequestOptions({ headers: headers, body: '' });
+        //
+        return this.http.delete(this.booksApiUrl+'/'+bookId, options)
+                    .map(this.extractData)
+                    .catch(this.handleError);
+
     }
 
     private extractData(res: Response) {

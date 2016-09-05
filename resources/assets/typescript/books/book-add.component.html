@@ -8,7 +8,7 @@
 
         <div class="contact-form">
 
-            <h2 class="title text-center">Add Book</h2>
+            <h2 class="title text-center">{{formText}} Book</h2>
             <div class="status alert alert-success" style="" *ngIf="bookSaveSuccess">{{bookSaveSuccess}}</div>
             <div class="status alert alert-warning" style="" *ngIf="bookSaveError">{{bookSaveError}}</div>
 
@@ -26,16 +26,16 @@
 
                 <div class="form-group col-md-12">
                     <select formControlName="category_id" class="form-control" placeholder="Book Category">
-                        <option value="">--Select Category--</option>
-                        <option value="{{category.id}}" *ngFor="let category of categories">{{category.name}}</option>
+                        <option value="" [selected]="myForm.value.category_id==='' ? 'selected': null">--Select Category--</option>
+                        <option value="{{category.id}}" *ngFor="let category of categories" [selected]="myForm.value.category_id===category.id ? 'selected': null">{{category.name}}</option>
                     </select>
                     <small [hidden]="myForm.controls.category_id.pristine || myForm.controls.category_id.valid" class="redAlert">Required.</small>
                 </div>
 
                 <div class="form-group col-md-12">
                     <select formControlName="level_id" class="form-control" placeholder="Class">
-                        <option value="">--Select Class--</option>
-                        <option value="{{level.id}}" *ngFor="let level of levels">{{level.name}}</option>
+                        <option value="" [selected]="myForm.value.level_id==='' ? 'selected': null">--Select Class--</option>
+                        <option value="{{level.id}}" *ngFor="let level of levels" [selected]="myForm.value.level_id===level.id ? 'selected': null">{{level.name}}</option>
                     </select>
                     <small [hidden]="myForm.controls.level_id.pristine || myForm.controls.level_id.valid" class="redAlert">Required.</small>
                 </div>
@@ -119,8 +119,8 @@
 
                 <div class="form-group col-md-12">
                     <select formControlName="supplier_id" class="form-control" placeholder="Class">
-                        <option value="">--Select Supplier--</option>
-                        <option value="{{supplier.id}}" *ngFor="let supplier of suppliers">{{supplier.name}}</option>
+                        <option value="" [selected]="myForm.value.supplier_id==='' ? 'selected': null">--Select Supplier--</option>
+                        <option value="{{supplier.id}}" *ngFor="let supplier of suppliers" [selected]="myForm.value.supplier_id===supplier.id ? 'selected': null">{{supplier.name}}</option>
                     </select>
                     <!--<small [hidden]="myForm.controls.supplier_id.pristine || myForm.controls.supplier_id.valid" class="redAlert">Required.</small>-->
                 </div>

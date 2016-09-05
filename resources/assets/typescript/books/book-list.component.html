@@ -69,7 +69,7 @@
                         <!--<td><img [src]="book?.image"></td>-->
                         <td class=""><img src="cover_images/book/1/amazon_banner.png" style="width:60px;height:100px"></td>
                         <td class="">
-                            <select class="form-control" [(ngModel)]="actionValue[book?.id]" (click)="onClick(book?.id)">
+                            <select class="form-control" [(ngModel)]="actionValue[book?.id]" (click)="open(book?.id)">
                                 <option value="">Edit/Delete</option>
                                 <option value="edit">Edit</option>
                                 <option value="delete">Delete</option>
@@ -102,3 +102,47 @@
         </div>
     </div>
 </section> <!--/#cart_items-->
+
+<modal [animation]="animation" [keyboard]="keyboard" [backdrop]="backdrop" #modal1>
+    <modal-header [show-close]="true">
+
+        <h4 class="modal-title">Delete Book</h4>
+
+    </modal-header>
+    <modal-body>
+
+        <h4>Are you sure you want to delete the selected book?</h4>
+
+    </modal-body>
+    <modal-footer [show-default-buttons]="false">
+        
+        <button class="btn btn-success btn-sm pull-right" (click)="removeBook();modal1.close()">
+            <i class="fa fa-check" aria-hidden="true"></i>Ok</button>
+
+        <button class="btn btn-danger btn-sm pull-right" style="margin-right:5px" (click)="modal1.close()">
+            <i class="fa fa-times" aria-hidden="true"></i>Close</button>
+
+    </modal-footer>
+</modal>
+
+<modal [animation]="animation" [keyboard]="keyboard" [backdrop]="backdrop" #modal2>
+    <modal-header [show-close]="true">
+
+        <h4 class="modal-title">Edit Book</h4>
+
+    </modal-header>
+    <modal-body>
+
+        <h4>Are you sure you want to edit the selected book</h4>
+
+    </modal-body>
+    <modal-footer [show-default-buttons]="false">
+        
+        <button class="btn btn-success btn-sm pull-right" (click)="editBook();modal2.close()">
+            <i class="fa fa-check" aria-hidden="true"></i>Ok</button>
+
+        <button class="btn btn-danger btn-sm pull-right" style="margin-right:5px" (click)="modal2.close()">
+            <i class="fa fa-times" aria-hidden="true"></i>Close</button>
+
+    </modal-footer>
+</modal>

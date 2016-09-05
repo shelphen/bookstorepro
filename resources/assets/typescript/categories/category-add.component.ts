@@ -21,6 +21,8 @@ export class CategoryAddComponent implements OnInit, OnDestroy{
     private catSaveSuccess;
 
     private selectedCatId;
+
+    private formText: string = 'Add';
     
     constructor(private catService: CategoryService, private _fb: FormBuilder, private router: Router, private activeRoute : ActivatedRoute){}
 
@@ -63,6 +65,7 @@ export class CategoryAddComponent implements OnInit, OnDestroy{
              let catEditDetails: any = this.catService.getCatEditDetails();
              if(catEditDetails){
 
+                 this.formText = 'Edit';
                 // we will initialize our form model here
                 this.myForm = this._fb.group({
                                         name: [catEditDetails.name, Validators.required]

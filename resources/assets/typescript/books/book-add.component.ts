@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { BookService } from './books.service';
 import { BookInterface } from './book.interface';
 import { REACTIVE_FORM_DIRECTIVES, FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
     selector: 'book-add',
@@ -27,8 +27,12 @@ export class BookAddComponent implements OnInit, OnDestroy{
     private bookSaveError;
 
     private bookSaveSuccess;
+
+    private selectedBookId;
+
+    private formText: string = 'Add';
     
-    constructor(private bookService: BookService, private _fb: FormBuilder, private router: Router){}
+    constructor(private bookService: BookService, private _fb: FormBuilder, private router: Router, private activeRoute : ActivatedRoute){}
 
     save(model: BookInterface, isValid: boolean) {
 
@@ -38,7 +42,7 @@ export class BookAddComponent implements OnInit, OnDestroy{
             
             //if(this.uploadedFile){
 
-                this.bookService.saveBook(model, this.uploadedFile).subscribe( 
+                this.bookService.saveBook(model, this.selectedBookId, this.uploadedFile).subscribe( 
                                     result => { 
                                                 this.bookSaveError='';
                                                 this.bookSaveSuccess = result.success;  
@@ -72,20 +76,108 @@ export class BookAddComponent implements OnInit, OnDestroy{
 
     ngOnInit() {
 
-        // we will initialize our form model here
-        this.myForm = this._fb.group({
-                                        title: ['', Validators.required],
-                                        quantityMethod: this.initQuantityMethodFormGroup(),
-                                        description: [''],
-                                        category_id: ['', Validators.required],
-                                        level_id: ['', Validators.required],
-                                        author: ['', Validators.required],
-                                        price: ['', Validators.required],
-                                        sales_price: ['', Validators.required],
-                                        batch: [''],
-                                        supplier_id: [''],
-                                        image: ['']
-                                    });
+        this.activeRoute.params.subscribe(params => this.selectedBookId = params['id'] );
+
+         if(this.selectedBookId > 0) {
+             
+             let bookEditDetails: any = this.bookService.getBookEditDetails();
+             if(bookEditDetails){
+                 console.log('Book Edit Details', bookEditDetails);
+                 console.log('Box type', this.initQuantityMethodFormGroup());
+                 this.formText = 'Edit';
+                // we will initialize our form model here
+                // this.myForm = this._fb.group({
+                //                         name: [bookEditDetails.name, Validators.required]
+                //                     });
+
+                // we will initialize our form model here
+                if(bookEditDetails.quantity_type === 'box'){
+                    this.myForm = this._fb.group({
+                                                title: [bookEditDetails.title, Validators.required],
+                                                quantityMethod: this._fb.group({
+                                                                                    type: ['box'],
+                                                                                    box: this._fb.group({
+                                                                                                            number_of_boxes: [bookEditDetails.number_of_boxes, Validators.required],
+                                                                                                            quantity: [bookEditDetails.quantity, Validators.required]
+                                                                                                        }),
+                                                                                    stock: this._fb.group( {
+                                                                                                            quantity: ['', Validators.required]
+                                                                                                        }),
+                                                                                }),
+                                                description: [ bookEditDetails.description ],
+                                                category_id: [ bookEditDetails.category_id, Validators.required ],
+                                                level_id: [ bookEditDetails.level_id , Validators.required],
+                                                author: [ bookEditDetails.author, Validators.required ],
+                                                price: [ bookEditDetails.price, Validators.required ],
+                                                sales_price: [ bookEditDetails.sales_price, Validators.required ],
+                                                batch: [ bookEditDetails.batch ],
+                                                supplier_id: [ bookEditDetails.supplier_id],
+                                                image: ['']
+                                            });
+
+                }else if(bookEditDetails.quantity_type === 'stock'){
+
+                    this.myForm = this._fb.group({
+                                                title: [bookEditDetails.title, Validators.required],
+                                                quantityMethod: this._fb.group({
+                                                                                    type: ['stock'],
+                                                                                    box: this._fb.group({
+                                                                                                            number_of_boxes: ['', Validators.required],
+                                                                                                            quantity: ['', Validators.required]
+                                                                                                        }),
+                                                                                    stock: this._fb.group( {
+                                                                                                            quantity: [bookEditDetails.quantity, Validators.required]
+                                                                                                        }),
+                                                                                }),
+                                                description: [bookEditDetails.description],
+                                                category_id: [bookEditDetails.category_id, Validators.required],
+                                                level_id: [bookEditDetails.levels_id, Validators.required],
+                                                author: [bookEditDetails.author, Validators.required],
+                                                price: [bookEditDetails.price, Validators.required],
+                                                sales_price: [bookEditDetails.sales_price, Validators.required],
+                                                batch: [bookEditDetails.batch],
+                                                supplier_id: [bookEditDetails.suppliers_id],
+                                                image: ['']
+                                            });
+
+                }
+
+                this.bookService.setBookEditDetails(undefined);
+
+             }else{
+                // we will initialize our form model here
+                this.myForm = this._fb.group({
+                                                title: ['', Validators.required],
+                                                quantityMethod: this.initQuantityMethodFormGroup(),
+                                                description: [''],
+                                                category_id: ['', Validators.required],
+                                                level_id: ['', Validators.required],
+                                                author: ['', Validators.required],
+                                                price: ['', Validators.required],
+                                                sales_price: ['', Validators.required],
+                                                batch: [''],
+                                                supplier_id: [''],
+                                                image: ['']
+                                            });
+             }
+
+        }else{
+
+            // we will initialize our form model here
+            this.myForm = this._fb.group({
+                                            title: ['', Validators.required],
+                                            quantityMethod: this.initQuantityMethodFormGroup(),
+                                            description: [''],
+                                            category_id: ['', Validators.required],
+                                            level_id: ['', Validators.required],
+                                            author: ['', Validators.required],
+                                            price: ['', Validators.required],
+                                            sales_price: ['', Validators.required],
+                                            batch: [''],
+                                            supplier_id: [''],
+                                            image: ['']
+                                        });
+        }
         
         this.subscribePaymentTypeChanges();// after form model initialization // subscribe to quantity method type changes
 

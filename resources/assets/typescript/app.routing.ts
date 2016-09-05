@@ -4,6 +4,7 @@ import { BookRoutes } from './books/book.routes';
 import { CategoryRoutes } from './categories/category.routes';
 import { SupplierRoutes } from './suppliers/supplier.routes';
 import { LevelRoutes } from './levels/level.routes';
+import { CartRoutes } from './cart/cart.routes';
 
 //import { HeaderComponent } from './header/header.component';
 import { LoginComponent } from './login/login.component';
@@ -17,6 +18,7 @@ const appRoutes : Routes = [
     ...CategoryRoutes,
     ...SupplierRoutes,
     ...LevelRoutes,
+    ...CartRoutes,
      {
         path: 'login',
         component: LoginComponent

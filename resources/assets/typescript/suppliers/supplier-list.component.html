@@ -4,9 +4,13 @@
     }
 </style>
 
+<section id="cart_items" [@flyInOut]="'in'">
+    <div class="container">
+
 <h2 class="title text-center">Supplier List</h2>
 <div class="status alert alert-warning" style="" *ngIf="suppLoadError">{{suppLoadError}}</div>
 
+<div class="table-responsive cart_info" style="border:none !important">
 <!-- pager -->
 <ul *ngIf="pager.pages?.length" class="pagination" style="float:right">
     <li [ngClass]="{disabled:pager.currentPage === 1}">
@@ -28,8 +32,8 @@
 
 <table class="table table-bordered">
     <thead>
-        <tr>
-            <td>Category</td>
+        <tr class="cart_menu">
+            <td>Supplier</td>
             <td>Location</td>
             <td>Phone</td>
             <td>Number Of Books</td>
@@ -43,10 +47,10 @@
             <td>{{supplier?.contact}}</td>
             <td>{{supplier?.book_count_relation[0]?.count}}</td>
             <td>
-                <select class="form-control" [(ngModel)]="actionValue[book?.id]" (click)="onClick(book?.id)">
-                    <option value="">Edit/Delete</option>
-                    <option value="edit">Edit</option>
-                    <option value="delete">Delete</option>
+                <select class="form-control" [(ngModel)]="actionValue[supplier?.id]" (click)="open(supplier?.id)">
+                    <option value="" [selected]="actionValue[supplier?.id]===undefined ? 'selected': null">Edit/Delete</option>
+                    <option value="edit" [selected]="actionValue[supplier?.id]==='edit' ? 'selected': null">Edit</option>
+                    <option value="delete" [selected]="actionValue[supplier?.id]==='delete' ? 'selected': null">Delete</option>
                 </select>
             </td>
         </tr>
@@ -72,3 +76,51 @@
         <a class="cpointer" (click)="setPage(pager.totalPages)">Last</a>
     </li>
 </ul>
+</div>
+
+</div>
+</section> <!--/#cart_items-->
+
+<modal [animation]="animation" [keyboard]="keyboard" [backdrop]="backdrop" #modal1>
+    <modal-header [show-close]="true">
+
+        <h4 class="modal-title">Delete Supplier</h4>
+
+    </modal-header>
+    <modal-body>
+
+        <h4>Are you sure you want to delete the selected supplier?</h4>
+
+    </modal-body>
+    <modal-footer [show-default-buttons]="false">
+        
+        <button class="btn btn-success btn-sm pull-right" (click)="removeSupplier();modal1.close()">
+            <i class="fa fa-check" aria-hidden="true"></i>Ok</button>
+
+        <button class="btn btn-danger btn-sm pull-right" style="margin-right:5px" (click)="modal1.close()">
+            <i class="fa fa-times" aria-hidden="true"></i>Close</button>
+
+    </modal-footer>
+</modal>
+
+<modal [animation]="animation" [keyboard]="keyboard" [backdrop]="backdrop" #modal2>
+    <modal-header [show-close]="true">
+
+        <h4 class="modal-title">Edit Supplier</h4>
+
+    </modal-header>
+    <modal-body>
+
+        <h4>Are you sure you want to edit the selected supplier</h4>
+
+    </modal-body>
+    <modal-footer [show-default-buttons]="false">
+        
+        <button class="btn btn-success btn-sm pull-right" (click)="editSupplier();modal2.close()">
+            <i class="fa fa-check" aria-hidden="true"></i>Ok</button>
+
+        <button class="btn btn-danger btn-sm pull-right" style="margin-right:5px" (click)="modal2.close()">
+            <i class="fa fa-times" aria-hidden="true"></i>Close</button>
+
+    </modal-footer>
+</modal>

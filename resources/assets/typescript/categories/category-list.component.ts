@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, trigger, state, style, animate, transition } from '@angular/core';
 import { CategoryService } from './category.service';
 import * as _ from 'underscore';
 import { PagerService } from '../services/pagination-service';
@@ -9,6 +9,24 @@ import { Router } from '@angular/router';
     selector: 'category-list',
     template: require('./category-list.component.html'),
     directives: [MODAL_DIRECTIVES],
+    animations: [
+        trigger('flyInOut', [
+            state('in', style({ opacity: 1, transform: 'translateX(0)' })),
+            transition('void => *', [
+                style({
+                    opacity: 0,
+                    transform: 'translateX(-100%)'
+                }),
+                animate('0.6s ease-in')
+            ]),
+            transition('* => void', [
+                animate('0.2s 10 ease-out', style({
+                    opacity: 0,
+                    transform: 'translateX(100%)'
+                }))
+            ])
+        ])
+    ]
 })
 
 export class CategoryListComponent implements OnInit, OnDestroy{
@@ -17,13 +35,15 @@ export class CategoryListComponent implements OnInit, OnDestroy{
 
     private catLoadError;
 
+    private catRemoveSuccess;
+
     pager: any = {};// pager object
  
     pagedItems: any[];// paged items
 
     actionValue: any[] = [];
 
-    selectedCategoryId;
+    private selectedCategoryId;
 
     @ViewChild('modal1') modal1: ModalComponent;
 
@@ -61,9 +81,11 @@ export class CategoryListComponent implements OnInit, OnDestroy{
                                                 },
                                                 error => {
                                                     console.log(error);
+                                                    this.catRemoveSuccess='';
                                                     this.catLoadError = error; 
                                                 },
                                                 () =>  { 
+                                                    this.catRemoveSuccess='';
                                                     this.setPage(1);
                                                     console.log('Done Fetching Categories'); 
                                                     }
@@ -81,8 +103,23 @@ export class CategoryListComponent implements OnInit, OnDestroy{
         if(this.actionValue[catId]=='edit') this.modal2.open('lg');
     }
 
-    removeCategory(catId){
-        console.log('Remove the category with id ' + catId);
+    removeCategory(){
+        this.catService.removeCategory(this.selectedCategoryId)
+                                .subscribe( 
+                                                result => { 
+                                                    console.log(result);
+                                                    this.catLoadError = '';
+                                                    this.catRemoveSuccess=result.success;
+                                                },
+                                                error => {
+                                                    console.log(error);
+                                                    this.catLoadError = error;
+                                                },
+                                                () =>  { 
+                                                    console.log('Done Deleting Categories'); 
+                                                    this.getCategories();
+                                                    }
+                                            );
     }
 
     editCategory(){
