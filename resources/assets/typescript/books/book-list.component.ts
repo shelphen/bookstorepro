@@ -6,6 +6,8 @@ import { Overlay } from 'angular2-modal';
 //import { Modal } from 'angular2-modal/plugins/bootstrap';
 import { MODAL_DIRECTIVES, ModalComponent } from 'ng2-bs3-modal/ng2-bs3-modal';
 import { Router } from '@angular/router';
+import {SlimLoadingBarService, SlimLoadingBarComponent} from 'ng2-slim-loading-bar';
+import { NotificationService } from '../services/notification/notification.service';
 
 @Component({
     selector: 'book-list',
@@ -50,9 +52,14 @@ export class BookListComponent implements OnInit, OnDestroy{
 
     @ViewChild('modal2') modal2: ModalComponent;
 
-    constructor(private bookService: BookService, private pagerService: PagerService, overlay: Overlay, vcRef: ViewContainerRef, private router: Router){
-        overlay.defaultViewContainer = vcRef;
-    }
+    constructor(
+                private bookService: BookService, 
+                private pagerService: PagerService, 
+                overlay: Overlay, 
+                vcRef: ViewContainerRef, 
+                private router: Router, 
+                private slimLoadingBarService:SlimLoadingBarService,
+                private notificationService: NotificationService){ overlay.defaultViewContainer = vcRef; }
 
     ngOnInit(){
         this.getBooks();
@@ -126,6 +133,19 @@ export class BookListComponent implements OnInit, OnDestroy{
 
         let route = '/books/add/' + this.selectedBookId;
         this.router.navigate([ route ]); 
+    }
+
+    startLoading() {
+        this.notificationService.printErrorMessage('Loading...');
+        // We can listen when loading will be completed 
+        //this.slimLoadingBarService.start(() => {
+            //console.log('Loading complete');
+        //});
+        this.slimLoadingBarService.start();
+        setTimeout(() => {
+            this.slimLoadingBarService.complete();
+            this.notificationService.printSuccessMessage('Loading Complete...');
+        }, 5000);
     }
 
     ngOnDestroy(){

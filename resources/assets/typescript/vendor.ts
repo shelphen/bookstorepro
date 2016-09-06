@@ -20,3 +20,5 @@ import 'rxjs';
 
 import 'jquery';
 import 'bootstrap/dist/js/bootstrap';
+
+import 'alertify.js';
