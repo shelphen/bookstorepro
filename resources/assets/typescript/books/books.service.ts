@@ -10,12 +10,6 @@ export class BookService{
 
     private booksApiUrl = '/api/books';
 
-    private catApiUrl = '/api/categories'; 
-
-    private levelApiUrl = '/api/levels';
-
-    private suppApiUrl = '/api/suppliers';
-
     private bookEditDetails;
     
     constructor(private localStorage: LocalStorage, private authService: AuthService, private http: Http){}
@@ -28,39 +22,6 @@ export class BookService{
         return this.http.get(this.booksApiUrl, options)
                     .map(this.extractData)
                     .catch(this.handleError);
-    }
-
-    getCategories(){
-
-        let headers = new Headers( { 'Content-Type': 'application/json', 'Authorization': 'Bearer '  +  localStorage.getItem('auth_token') } );
-        let options = new RequestOptions({ headers: headers, body: '' });
-
-        return this.http.get(this.catApiUrl, options)
-                    .map(this.extractData)
-                    .catch(this.handleError);
-
-    }
-
-    getLevels(){
-
-        let headers = new Headers( { 'Content-Type': 'application/json', 'Authorization': 'Bearer '  +  localStorage.getItem('auth_token') } );
-        let options = new RequestOptions({ headers: headers, body: '' });
-
-        return this.http.get(this.levelApiUrl, options)
-                    .map(this.extractData)
-                    .catch(this.handleError);
-
-    }
-
-    getSuppliers(){
-
-        let headers = new Headers( { 'Content-Type': 'application/json', 'Authorization': 'Bearer '  +  localStorage.getItem('auth_token') } );
-        let options = new RequestOptions({ headers: headers, body: '' });
-
-        return this.http.get(this.suppApiUrl, options)
-                    .map(this.extractData)
-                    .catch(this.handleError);
-
     }
 
     saveBook(model, bookId, file){

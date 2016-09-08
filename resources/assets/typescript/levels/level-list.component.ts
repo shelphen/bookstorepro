@@ -1,11 +1,33 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, trigger, state, style, animate, transition } from '@angular/core';
 import { LevelService } from './level.service';
 import * as _ from 'underscore';
 import { PagerService } from '../services/pagination-service';
+import { MODAL_DIRECTIVES, ModalComponent } from 'ng2-bs3-modal/ng2-bs3-modal';
+import { Router } from '@angular/router';
+import {SlimLoadingBarService, SlimLoadingBarComponent} from 'ng2-slim-loading-bar';
+import { NotificationService } from '../services/notification/notification.service';
 
 @Component({
     selector: 'category-list',
-    template: require('./level-list.component.html')
+    template: require('./level-list.component.html'),
+    animations: [
+        trigger('flyInOut', [
+            state('in', style({ opacity: 1, transform: 'translateX(0)' })),
+            transition('void => *', [
+                style({
+                    opacity: 0,
+                    transform: 'translateX(-100%)'
+                }),
+                animate('0.6s ease-in')
+            ]),
+            transition('* => void', [
+                animate('0.2s 10 ease-out', style({
+                    opacity: 0,
+                    transform: 'translateX(100%)'
+                }))
+            ])
+        ])
+    ]
 })
 
 export class LevelListComponent implements OnInit, OnDestroy{
@@ -20,27 +42,39 @@ export class LevelListComponent implements OnInit, OnDestroy{
 
     actionValue: any[] = [];
 
-    constructor(private levelService: LevelService, private pagerService: PagerService){}
+    @ViewChild('modal1') modal1: ModalComponent;
+
+    @ViewChild('modal2') modal2: ModalComponent;
+
+    animation: boolean = true;
+
+    keyboard: boolean = true;
+
+    backdrop: string | boolean = true;
+
+    private selectedLevelId;
+
+    constructor(
+                private levelService: LevelService, 
+                private pagerService: PagerService,
+                private router: Router,
+                private slimLoadingBarService:SlimLoadingBarService,
+                private notificationService: NotificationService){}
 
     ngOnInit(){
-        this.getCategories();
+        this.getLevels();
     }
 
-    getCategories(){
+    getLevels(){
+        this.slimLoadingBarService.start();
         this.levelService.getLevels()
                                 .subscribe( 
-                                                result => { 
-                                                    console.log(result.levels);
-                                                    this.levelLoadError='';
-                                                    this.levels = result.levels;
-                                                },
-                                                error => {
-                                                    console.log(error);
-                                                    this.levelLoadError = error; 
-                                                },
+                                                result => this.levels = result.levels,
+                                                error => this.notificationService.printErrorMessage(error.error),
                                                 () =>  { 
-                                                    console.log('Done Fetching Levels'); 
-                                                    this.setPage(1);
+                                                        this.setPage(1);
+                                                        this.slimLoadingBarService.complete();
+                                                        this.notificationService.printSuccessMessage('Done fetching Class...');
                                                     }
                                             );
     }
@@ -53,6 +87,38 @@ export class LevelListComponent implements OnInit, OnDestroy{
  
         this.pagedItems = this.levels.slice(this.pager.startIndex, this.pager.endIndex + 1);//get current page of items
 
+    }
+
+    close() {
+        //this.modal1.close();
+    }
+
+    open(supId) {
+        if(!this.actionValue[supId]) return;
+        this.selectedLevelId = supId;
+        if(this.actionValue[supId]=='delete') this.modal1.open('lg');
+        if(this.actionValue[supId]=='edit') this.modal2.open('lg');
+    }
+
+    removeLevel(){
+        this.levelService.removeLevel(this.selectedLevelId)
+                                .subscribe( 
+                                                result => this.notificationService.printSuccessMessage(result.success),
+                                                error => this.notificationService.printErrorMessage(error.error),
+                                                () => this.getLevels()
+                                            );
+    }
+
+    editLevel(){
+
+        let selSupId = this.selectedLevelId;
+        let dis = this;
+        _.each(this.levels, function( level: any ) { 
+            if( level.id === selSupId ) dis.levelService.setLevelEditDetails(level);
+        }, selSupId);
+
+        let route = '/levels/add/' + this.selectedLevelId;
+        this.router.navigate([ route ]); 
     }
 
     ngOnDestroy(){

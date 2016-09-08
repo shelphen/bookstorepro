@@ -2,7 +2,8 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { LevelService } from './level.service';
 import { LevelInterface } from './level.interface';
 import { REACTIVE_FORM_DIRECTIVES, FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
+import { NotificationService } from '../services/notification/notification.service';
 
 @Component({
     selector: 'level-add',
@@ -17,8 +18,17 @@ export class LevelAddComponent implements OnInit, OnDestroy{
     private levelSaveError;
 
     private levelSaveSuccess;
+
+    private formText: string = 'Add';
+
+    private selectedLevelId;
     
-    constructor(private levelService: LevelService, private _fb: FormBuilder, private router: Router){}
+    constructor(
+                private levelService: LevelService, 
+                private _fb: FormBuilder, 
+                private router: Router,
+                private activeRoute : ActivatedRoute,
+                private notificationService: NotificationService){}
 
     save(model: LevelInterface, isValid: boolean) {
 
@@ -26,17 +36,10 @@ export class LevelAddComponent implements OnInit, OnDestroy{
         if(isValid){
             this.levelSaveError='';
 
-            this.levelService.saveLevel(model).subscribe( 
-                                result => { 
-                                            this.levelSaveError='';
-                                            this.levelSaveSuccess = result.success;  
-                                        },
-                                error => { 
-                                            this.levelSaveSuccess='';
-                                            this.levelSaveError = error; 
-                                        },
+            this.levelService.saveLevel(model, this.selectedLevelId).subscribe( 
+                                result => this.notificationService.printSuccessMessage(result.success),
+                                error => this.notificationService.printErrorMessage(error.error),
                                     () =>  { 
-                                            console.log("Done Saving Level..."); 
                                             let _dis = this;
                                             setTimeout(function(){
                                                _dis.router.navigate(['/levels/list']);
@@ -53,10 +56,35 @@ export class LevelAddComponent implements OnInit, OnDestroy{
 
     ngOnInit() {
 
-        // we will initialize our form model here
-        this.myForm = this._fb.group({
-                                        name: ['', Validators.required]
-                                    });
+        this.activeRoute.params.subscribe(params => this.selectedLevelId = params['id'] );
+
+         if(this.selectedLevelId > 0) {
+             
+             let levelEditDetails: any = this.levelService.getLevelEditDetails();
+             if(levelEditDetails){
+
+                 this.formText = 'Edit';
+                // we will initialize our form model here
+            this.myForm = this._fb.group({
+                                            name: [levelEditDetails.name, Validators.required]
+                                        });
+
+                this.levelService.setLevelEditDetails(undefined);
+             }else{
+                 // we will initialize our form model here
+            this.myForm = this._fb.group({
+                                            name: ['', Validators.required]
+                                        });
+             }
+
+        }else{
+
+            // we will initialize our form model here
+            this.myForm = this._fb.group({
+                                            name: ['', Validators.required]
+                                        });
+        }
+
     }
 
     ngOnDestroy(){

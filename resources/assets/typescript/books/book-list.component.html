@@ -4,12 +4,10 @@
     }
 </style>
 
-<button (click)="startLoading()">Start Loading</button>
-<ng2-slim-loading-bar></ng2-slim-loading-bar>
-
 <section id="cart_items" [@flyInOut]="'in'">
     <div class="container">
-
+        <ng2-slim-loading-bar></ng2-slim-loading-bar>
+        
         <div class="status alert alert-warning" style="" *ngIf="bookLoadError">{{bookLoadError}}</div>
 
         <h2 class="title text-center">Book List</h2>

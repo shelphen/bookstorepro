@@ -4,6 +4,8 @@ import * as _ from 'underscore';
 import { PagerService } from '../services/pagination-service';
 import { MODAL_DIRECTIVES, ModalComponent } from 'ng2-bs3-modal/ng2-bs3-modal';
 import { Router } from '@angular/router';
+import {SlimLoadingBarService, SlimLoadingBarComponent} from 'ng2-slim-loading-bar';
+import { NotificationService } from '../services/notification/notification.service';
 
 @Component({
     selector: 'category-list',
@@ -55,7 +57,12 @@ export class CategoryListComponent implements OnInit, OnDestroy{
 
     backdrop: string | boolean = true;
 
-    constructor(private catService: CategoryService, private pagerService: PagerService, private router: Router){}
+    constructor(
+                private catService: CategoryService, 
+                private pagerService: PagerService, 
+                private router: Router,
+                private slimLoadingBarService:SlimLoadingBarService,
+                private notificationService: NotificationService){}
 
     ngOnInit(){
         this.getCategories();
@@ -72,22 +79,15 @@ export class CategoryListComponent implements OnInit, OnDestroy{
     }
 
     getCategories(){
+        this.slimLoadingBarService.start();
         this.catService.getCategories()
                                 .subscribe( 
-                                                result => { 
-                                                    //console.log(result.categories);
-                                                    this.catLoadError='';
-                                                    this.categories = result.categories;
-                                                },
-                                                error => {
-                                                    console.log(error);
-                                                    this.catRemoveSuccess='';
-                                                    this.catLoadError = error; 
-                                                },
+                                                result => this.categories = result.categories,
+                                                error => this.notificationService.printErrorMessage(error.error),
                                                 () =>  { 
-                                                    this.catRemoveSuccess='';
                                                     this.setPage(1);
-                                                    console.log('Done Fetching Categories'); 
+                                                    this.slimLoadingBarService.complete();
+                                                    this.notificationService.printSuccessMessage('Done fetching Categories...');
                                                     }
                                             );
     }
@@ -106,19 +106,9 @@ export class CategoryListComponent implements OnInit, OnDestroy{
     removeCategory(){
         this.catService.removeCategory(this.selectedCategoryId)
                                 .subscribe( 
-                                                result => { 
-                                                    console.log(result);
-                                                    this.catLoadError = '';
-                                                    this.catRemoveSuccess=result.success;
-                                                },
-                                                error => {
-                                                    console.log(error);
-                                                    this.catLoadError = error;
-                                                },
-                                                () =>  { 
-                                                    console.log('Done Deleting Categories'); 
-                                                    this.getCategories();
-                                                    }
+                                                result => this.notificationService.printSuccessMessage(result.success),
+                                                error => this.notificationService.printErrorMessage(error.error),
+                                                () => this.getCategories()
                                             );
     }
 

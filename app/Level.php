@@ -28,7 +28,7 @@ class Level extends Model
 
     public function setNameAttribute($value){
 
-                $this->attributes['name'] = strtoupper( $value ); 
+                $this->attributes['name'] = ucfirst( strtoupper( $value ) ); 
 
     }
 

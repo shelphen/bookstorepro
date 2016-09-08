@@ -5,6 +5,7 @@ import { CategoryRoutes } from './categories/category.routes';
 import { SupplierRoutes } from './suppliers/supplier.routes';
 import { LevelRoutes } from './levels/level.routes';
 import { CartRoutes } from './cart/cart.routes';
+import { HomeRoutes } from './home/home.routes';
 
 //import { HeaderComponent } from './header/header.component';
 import { LoginComponent } from './login/login.component';
@@ -13,7 +14,7 @@ import { SignUpComponent } from './signup/signup.component';
 
 
 const appRoutes : Routes = [
-
+    ...HomeRoutes,
     ...BookRoutes,
     ...CategoryRoutes,
     ...SupplierRoutes,
@@ -29,7 +30,7 @@ const appRoutes : Routes = [
     },
     {
         path: '',
-        redirectTo: '/books/list',
+        redirectTo: '/home',
         pathMatch:'full'
     }
     //{

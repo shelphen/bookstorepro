@@ -6,34 +6,42 @@ use Illuminate\Http\Request;
 
 use App\Http\Requests;
 
-use App\Supplier;
+use App\Book;
 
 use Log;
 
-use App\Http\Requests\SupplierRequest;
 
-class SupplierController extends Controller
+
+class CartController extends Controller
 {
 
-    private $supplier;
+    protected $book;
 
-    public function __construct(Supplier $supplier){
-        $this->middleware('jwt.auth', []);
-        $this->supplier = $supplier;
+    public function __construct(Book $book){
+        $this->book = $book;
     }
-    
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+
         try{
+ 
+                $books = Book::with([
+                                        'category' => function($q) use($request) { $q->where('name','like','%'.$request->get('search').'%'); },
+                                        'supplier' => function($q) use($request) { $q->where('name','like','%'.$request->get('search').'%'); },
+                                        'level' => function($q) use($request) { $q->where('name','like','%'.$request->get('search').'%'); }
+                                    ])
+                                    ->where('title','like', '%'.$request->input('search').'%' )
+                                    ->orWhere('author','like', '%'.$request->input('search').'%' )
+                                    ->where('quantity','>', 0 )
+                                    ->get();
 
-            if( $suppliers = $this->supplier->with('bookCountRelation')->get() ) return response()->json(compact('suppliers'), 200); 
-                else return response()->json(['error'=>'Error fetching suppliers list...'], 401);
-
+                return response()->json( compact('books'), 200 );
+                        
         }catch(\Exception $e) {
             Log::error("Exception caught, filename: " . $e->getFile() . " on line: " . $e->getLine());
             Log::error($e->getMessage());
@@ -57,15 +65,9 @@ class SupplierController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(SupplierRequest $request)
+    public function store(Request $request)
     {
-        if( Supplier::updateOrCreate( ['id' => $request->get('id')], $request->all() ) ){
-            $message = 'Supplier '. ( ( $request->get('id') > 0 ) ? 'edited' : 'added' ) . ' successfully...';
-
-            return response()->json(["success" => $message], 200);
-        }
-
-        return response()->json(["error" => "Failed to save supplier..."], 401);
+        //
     }
 
     /**
@@ -110,17 +112,6 @@ class SupplierController extends Controller
      */
     public function destroy($id)
     {
-        try{
-
-                if( $this->supplier->where('id', $id)->delete() ) return response()->json(['success' => 'Supplier removed successfully...' ], 200);
-
-                return response()->json(['error' => 'Supplier delete failed...'], 400);
-
-        }catch (Exception $e)
-        {
-                Log::error("Exception caught, filename: " . $e->getFile() . " on line: " . $e->getLine());
-                Log::error($e->getMessage());
-                return response()->json(['error' => 'Something unusual happened' ], 500);
-        }
+        //
     }
 }

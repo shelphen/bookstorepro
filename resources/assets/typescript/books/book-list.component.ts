@@ -80,7 +80,8 @@ export class BookListComponent implements OnInit, OnDestroy{
     }
 
     getBooks(){
-        
+        this.slimLoadingBarService.start();
+        //this.notificationService.printLogMessage('Fetching books...');
         this.bookService.getBooks()
                                 .subscribe( 
                                                 result => { 
@@ -88,11 +89,13 @@ export class BookListComponent implements OnInit, OnDestroy{
                                                     this.books = result.books;
                                                 },
                                                 error => {
-                                                    this.bookLoadError = error; 
+                                                    //this.bookLoadError = error.error;
+                                                    this.notificationService.printErrorMessage(error.error); 
                                                 },
                                                 () =>  { 
                                                     this.setPage(1);
-                                                    console.log('Done Fetching Books'); 
+                                                    this.slimLoadingBarService.complete();
+                                                    this.notificationService.printSuccessMessage('Done fetching books...');
                                                     }
                                             );
     }
@@ -145,7 +148,10 @@ export class BookListComponent implements OnInit, OnDestroy{
         setTimeout(() => {
             this.slimLoadingBarService.complete();
             this.notificationService.printSuccessMessage('Loading Complete...');
+            this.notificationService.printLogMessage('Logging Loading Complete...');
         }, 5000);
+
+        this.notificationService.openConfirmationDialog('Open Dialog Box', () =>{});
     }
 
     ngOnDestroy(){

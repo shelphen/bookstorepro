@@ -7,7 +7,13 @@ var alertify = require('alertify.js');
 export class NotificationService {
     private _notifier: any = alertify;
  
-    constructor() { }
+    constructor() { 
+        //this._notifier.logPosition("top right");
+        this._notifier.logPosition("top center");
+                        //.maxLogItems(2)
+                        //.closeOnClick(true)
+                        //.delay(5000)
+    }
  
     /*
     Opens a confirmation dialog using the alertify.js lib
@@ -24,15 +30,43 @@ export class NotificationService {
     /*
     Prints a success message using the alertify.js lib
     */
-    printSuccessMessage(message: string) {
+    printSuccessMessage(message: string, maxLog: number = 2) {
  
-        this._notifier.success(message);
+        this._notifier.success(message).maxLogItems(maxLog);
     }
  
     /*
     Prints an error message using the alertify.js lib
     */
-    printErrorMessage(message: string) {
-        this._notifier.error(message);
+    printErrorMessage(message: string, maxLog: number = 2) {
+        this._notifier.error(message).maxLogItems(maxLog);
+    }
+
+    /*
+    Log an error message
+    */
+    printLogMessage(message: string, maxLog: number = 2){
+        this._notifier
+                //.reset()
+                .maxLogItems(maxLog)
+                //.closeOnClick(false)
+                //.delay(5000)
+                .log(message);
+        
+        //alertify.set('notifier','position', 'top-right');
+        //alertify.success('Current position : ' + alertify.get('notifier','position'));
+        /*
+        // confirm dialog
+        alertify.confirm("Message", function () {
+            // user clicked "ok"
+        }, function() {
+            // user clicked "cancel"
+        });
+
+        var msg = "<img src='https://placehold.it/256x128'>" +
+                            "<h3>This is HTML</h3>" +
+                            "<p>It's great, right?</p>";
+                    alertify.log(msg);
+        */
     }
 }

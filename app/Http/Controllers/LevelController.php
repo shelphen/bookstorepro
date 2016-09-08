@@ -60,9 +60,14 @@ class LevelController extends Controller
     public function store(LevelRequest $request)
     {
         try{
+                
+                if( Level::updateOrCreate( ['id' => $request->get('id')], $request->all() ) ){
+                    $message = 'Class '. ( ( $request->get('id') > 0 ) ? 'edited' : 'added' ) . ' successfully...';
 
-                if(with(new Level)->newInstance($request->all(), $request->get('id') )->save()) return response()->json(["success" => "Level saved successfully..."], 200);
-                    else return response()->json(["error" => "Failed to save level..."], 401);
+                    return response()->json(["success" => $message], 200);
+                }
+
+                return response()->json(["error" => "Failed to save class..."], 401);
 
         }catch(\Exception $e) {
             Log::error("Exception caught, filename: " . $e->getFile() . " on line: " . $e->getLine());
@@ -113,6 +118,17 @@ class LevelController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try{
+
+                if( $this->level->where('id', $id)->delete() ) return response()->json(['success' => 'Class removed successfully...' ], 200);
+
+                return response()->json(['error' => 'Class delete failed...'], 400);
+
+        }catch (Exception $e)
+        {
+                Log::error("Exception caught, filename: " . $e->getFile() . " on line: " . $e->getLine());
+                Log::error($e->getMessage());
+                return response()->json(['error' => 'Something unusual happened' ], 500);
+        }
     }
 }

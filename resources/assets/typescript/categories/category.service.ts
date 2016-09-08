@@ -27,10 +27,6 @@ export class CategoryService{
 
     saveCategory(catDetails, catId): Observable<any>{
 
-            //catDetails.append({id: catId});
-            console.log(catDetails);
-            console.log(catId);
-
             catDetails['id'] = catId;
 
             let body = JSON.stringify( catDetails );

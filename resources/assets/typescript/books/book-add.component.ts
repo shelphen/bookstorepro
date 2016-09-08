@@ -1,8 +1,12 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { BookService } from './books.service';
+import { CategoryService } from '../categories/category.service';
+import { LevelService } from '../levels/level.service';
+import { SupplierService } from '../suppliers/supplier.service';
 import { BookInterface } from './book.interface';
 import { REACTIVE_FORM_DIRECTIVES, FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
+import { NotificationService } from '../services/notification/notification.service';
 
 @Component({
     selector: 'book-add',
@@ -32,7 +36,15 @@ export class BookAddComponent implements OnInit, OnDestroy{
 
     private formText: string = 'Add';
     
-    constructor(private bookService: BookService, private _fb: FormBuilder, private router: Router, private activeRoute : ActivatedRoute){}
+    constructor(
+                private bookService: BookService, 
+                private _fb: FormBuilder, 
+                private router: Router, 
+                private activeRoute : ActivatedRoute,
+                private levelService : LevelService,
+                private catService : CategoryService,
+                private suppService : SupplierService,
+                private notificationService: NotificationService){}
 
     save(model: BookInterface, isValid: boolean) {
 
@@ -44,12 +56,14 @@ export class BookAddComponent implements OnInit, OnDestroy{
 
                 this.bookService.saveBook(model, this.selectedBookId, this.uploadedFile).subscribe( 
                                     result => { 
-                                                this.bookSaveError='';
-                                                this.bookSaveSuccess = result.success;  
+                                                //this.bookSaveError='';
+                                                //this.bookSaveSuccess = result.success;
+                                                this.notificationService.printSuccessMessage(result.success);  
                                             },
                                     error => { 
-                                                this.bookSaveSuccess='';
-                                                this.bookSaveError = error.error; 
+                                                //this.bookSaveSuccess='';
+                                                //this.bookSaveError = error.error;
+                                                this.notificationService.printErrorMessage(error.error); 
                                             },
                                      () =>  { 
                                                 let _dis = this;
@@ -82,8 +96,8 @@ export class BookAddComponent implements OnInit, OnDestroy{
              
              let bookEditDetails: any = this.bookService.getBookEditDetails();
              if(bookEditDetails){
-                 console.log('Book Edit Details', bookEditDetails);
-                 console.log('Box type', this.initQuantityMethodFormGroup());
+                 //console.log('Book Edit Details', bookEditDetails);
+                 //console.log('Box type', this.initQuantityMethodFormGroup());
                  this.formText = 'Edit';
                 // we will initialize our form model here
                 // this.myForm = this._fb.group({
@@ -301,10 +315,9 @@ export class BookAddComponent implements OnInit, OnDestroy{
 
     getBookCategories(){
 
-        this.bookService.getCategories()
+        this.catService.getCategories()
                             .subscribe( 
                                     result => { 
-                                        console.log(result);
                                         this.categories = result.categories;
                                     },
                                     error => {
@@ -319,7 +332,7 @@ export class BookAddComponent implements OnInit, OnDestroy{
 
     getBookLevels(){
 
-        this.bookService.getLevels()
+        this.levelService.getLevels()
                             .subscribe( 
                                     result => { 
                                         //console.log(result);
@@ -338,7 +351,7 @@ export class BookAddComponent implements OnInit, OnDestroy{
 
     getBookSuppliers(){
 
-        this.bookService.getSuppliers()
+        this.suppService.getSuppliers()
                             .subscribe( 
                                     result => { 
                                         console.log(result);

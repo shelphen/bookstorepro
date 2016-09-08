@@ -8,7 +8,9 @@ import { Http, Headers, Response, RequestOptions } from '@angular/http';
 @Injectable()
 export class LevelService{
 
-    private catApiUrl = '/api/levels';
+    private levelApiUrl = '/api/levels';
+
+    private levelEditDetails: any;
     
     constructor(private localStorage: LocalStorage, private authService: AuthService, private http: Http){}
 
@@ -18,22 +20,42 @@ export class LevelService{
         let headers = new Headers( { 'Content-Type': 'application/json', 'Authorization': 'Bearer '  +  localStorage.getItem('auth_token') } );
         let options = new RequestOptions({ headers: headers, body: '' });
 
-        return this.http.get(this.catApiUrl, options)
+        return this.http.get(this.levelApiUrl, options)
                     .map(this.extractData)
                     .catch(this.handleError);
     }
 
-    saveLevel(levelDetails): Observable<any>{
-
+    saveLevel(levelDetails, levelId): Observable<any>{
+        
+        levelDetails['id']=levelId;
         let body = JSON.stringify( levelDetails );
         let headers = new Headers( { 'Content-Type': 'application/json', 'Authorization': 'Bearer '  +  localStorage.getItem('auth_token') } );
         let options = new RequestOptions({ headers: headers });
 
-        return this.http.post( this.catApiUrl, body, options )
+        return this.http.post( this.levelApiUrl, body, options )
                       .map(this.extractData)
                       .catch(this.handleError);
       
   }
+
+  removeLevel(levelId): Observable<any>{
+        
+        let headers = new Headers( { 'Content-Type': 'application/json', 'Authorization': 'Bearer '  +  localStorage.getItem('auth_token') } );
+        let options = new RequestOptions({ headers: headers, body: '' });
+        
+        return this.http.delete(this.levelApiUrl+'/'+levelId, options)
+                    .map(this.extractData)
+                    .catch(this.handleError);
+
+    }
+
+    setLevelEditDetails(supDetails: any){
+        this.levelEditDetails = supDetails;
+    }
+
+    getLevelEditDetails(){
+        return this.levelEditDetails;
+    }
 
     private extractData(res: Response) {
         return res.json() || { };

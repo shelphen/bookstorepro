@@ -25,6 +25,8 @@ import { HeaderComponent } from './header/header.component';
 import { FooterComponent } from './footer/footer.component';
 import { LoginComponent } from './login/login.component';
 import { SignUpComponent } from './signup/signup.component';
+import { HomeComponent } from './home/home.component';
+import { CartComponent } from './cart/cart.component';
 import { MODAL_DIRECTIVES, ModalComponent } from 'ng2-bs3-modal/ng2-bs3-modal';
 import { SlimLoadingBarService, SlimLoadingBarComponent } from 'ng2-slim-loading-bar';
 import { NotificationService } from './services/notification/notification.service';
@@ -35,6 +37,7 @@ import { BookService } from './books/books.service';
 import { CategoryService } from './categories/category.service';
 import { SupplierService } from './suppliers/supplier.service';
 import { LevelService } from './levels/level.service';
+import { CartService } from './cart/cart.service';
 import { routing } from './app.routing';
 import { PagerService } from './services/pagination-service';
 
@@ -47,12 +50,12 @@ import { PagerService } from './services/pagination-service';
                         CategoryComponent, CategoryAddComponent, CategoryListComponent,
                         SupplierListComponent,SupplierComponent,SupplierAddComponent,
                         LevelComponent, LevelListComponent, LevelAddComponent, MODAL_DIRECTIVES,
-                        SlimLoadingBarComponent 
+                        SlimLoadingBarComponent, HomeComponent, CartComponent 
                 ],
     providers:[ 
                         BookService, CategoryService, SupplierService, LevelService, LoginGuard, AuthService, 
                         WEB_STORAGE_PROVIDERS, HTTP_PROVIDERS, FormBuilder, PagerService, SlimLoadingBarService,
-                        NotificationService 
+                        NotificationService, CartService 
                 ],
     bootstrap: [ AppComponent ]
 })

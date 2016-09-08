@@ -1,17 +1,64 @@
+	
+	
 	<section id="cart_items">
 		<div class="container">
+			<!--
 			<div class="breadcrumbs">
 				<ol class="breadcrumb">
 				  <li><a href="#">Home</a></li>
 				  <li class="active">Book Cart</li>
 				</ol>
 			</div>
-			<div class="table-responsive cart_info">
+			-->
+
+			<div class="cart_info col-md-12" style="border:none">
+				<input type="text" [formControl]="term" placeholder="search for books">
+			</div>
+
+			<div class="table-responsive cart_info col-md-6" style="border:none">
 				<table class="table table-condensed">
 					<thead>
 						<tr class="cart_menu">
 							<td class="image">Book</td>
-							<td class="description"></td>
+							<td class="">Title</td>
+							<!--<td class="price">Price</td>-->
+							<td class="quantity">Quantity</td>
+							<td class="total">Add</td>
+						</tr>
+					</thead>
+					<tbody>
+						<tr *ngFor="let item of items; let i = index">
+
+							<td class="cart_product">
+								<img [src]="item?.image" alt="">
+							</td>
+							<td class="">
+								<p>{{item?.title}}</p>
+							</td>
+							<!--<td class="cart_price">
+								<p>GHC {{item?.sales_price}}</p>
+							</td>-->
+							<td class="cart_quantity">
+								<div class="cart_quantity_button">
+									<a class="cart_quantity_up" (click)="increment(i,'auto')" style="cursor:pointer"> + </a>
+									<input class="cart_quantity_input" type="text" name="quantity" value="{{listItems[i]}}" autocomplete="off" size="2" (keyup)="increment(i,'manual')" [(ngModel)]="listItems[i]">
+									<a class="cart_quantity_down" (click)="decrement(i,'auto')" style="cursor:pointer"> - </a>
+								</div>
+							</td>
+							<td class="cart_total">
+								<button class="btn btn-default" *ngIf="listItems[i] > 0" (click)="addToCart(i)">Add</button>
+							</td>
+
+						</tr>
+					</tbody>
+				</table>
+			</div>
+
+			<div class="table-responsive cart_info col-md-6" style="border:none">
+				<table class="table table-condensed">
+					<thead>
+						<tr class="cart_menu">
+							<td class="quantity">Title</td>
 							<td class="price">Price</td>
 							<td class="quantity">Quantity</td>
 							<td class="total">Total</td>
@@ -19,21 +66,17 @@
 						</tr>
 					</thead>
 					<tbody>
-						<tr>
+						<tr *ngFor="let cart of cartList">
 							<td class="cart_product">
-								<a ><img src="images/cart/one.png" alt=""></a>
-							</td>
-							<td class="cart_description">
-								<h4><a >Colorblock Scuba</a></h4>
-								<p>Web ID: 1089772</p>
+								<p>{{cart?.title}}</p>
 							</td>
 							<td class="cart_price">
-								<p>$59</p>
+								<p>GHC {{cart?.sales_price}}</p>
 							</td>
 							<td class="cart_quantity">
 								<div class="cart_quantity_button">
 									<a class="cart_quantity_up" > + </a>
-									<input class="cart_quantity_input" type="text" name="quantity" value="1" autocomplete="off" size="2">
+									<input class="cart_quantity_input" type="text" name="quantity" value="{{cart?.cart_quanity}}" autocomplete="off" size="2">
 									<a class="cart_quantity_down" > - </a>
 								</div>
 							</td>
@@ -42,61 +85,13 @@
 							</td>
 							<td class="cart_delete">
 								<a class="cart_quantity_delete" ><i class="fa fa-times"></i></a>
-							</td>
-						</tr>
-
-						<tr>
-							<td class="cart_product">
-								<a ><img src="images/cart/two.png" alt=""></a>
-							</td>
-							<td class="cart_description">
-								<h4><a >Colorblock Scuba</a></h4>
-								<p>Web ID: 1089772</p>
-							</td>
-							<td class="cart_price">
-								<p>$59</p>
-							</td>
-							<td class="cart_quantity">
-								<div class="cart_quantity_button">
-									<a class="cart_quantity_up" > + </a>
-									<input class="cart_quantity_input" type="text" name="quantity" value="1" autocomplete="off" size="2">
-									<a class="cart_quantity_down" > - </a>
-								</div>
-							</td>
-							<td class="cart_total">
-								<p class="cart_total_price">$59</p>
-							</td>
-							<td class="cart_delete">
-								<a class="cart_quantity_delete" ><i class="fa fa-times"></i></a>
-							</td>
-						</tr>
-						<tr>
-							<td class="cart_product">
-								<a ><img src="images/cart/three.png" alt=""></a>
-							</td>
-							<td class="cart_description">
-								<h4><a >Colorblock Scuba</a></h4>
-								<p>Web ID: 1089772</p>
-							</td>
-							<td class="cart_price">
-								<p>$59</p>
-							</td>
-							<td class="cart_quantity">
-								<div class="cart_quantity_button">
-									<a class="cart_quantity_up" > + </a>
-									<input class="cart_quantity_input" type="text" name="quantity" value="1" autocomplete="off" size="2">
-									<a class="cart_quantity_down" > - </a>
-								</div>
-							</td>
-							<td class="cart_total">
-								<p class="cart_total_price">$59</p>
-							</td>
-							<td class="cart_delete">
-								<a class="cart_quantity_delete" href=""><i class="fa fa-times"></i></a>
 							</td>
 						</tr>
 					</tbody>
 				</table>
 			</div>
+
 		</div>
 	</section> <!--/#cart_items-->
+
+	

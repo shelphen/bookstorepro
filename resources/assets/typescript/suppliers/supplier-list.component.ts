@@ -4,6 +4,8 @@ import * as _ from 'underscore';
 import { PagerService } from '../services/pagination-service';
 import { MODAL_DIRECTIVES, ModalComponent } from 'ng2-bs3-modal/ng2-bs3-modal';
 import { Router } from '@angular/router';
+import {SlimLoadingBarService, SlimLoadingBarComponent} from 'ng2-slim-loading-bar';
+import { NotificationService } from '../services/notification/notification.service';
 
 @Component({
     selector: 'supplier-list',
@@ -52,7 +54,12 @@ export class SupplierListComponent implements OnInit, OnDestroy{
 
     backdrop: string | boolean = true;
 
-    constructor(private suppService: SupplierService, private pagerService: PagerService, private router: Router){}
+    constructor(
+                private suppService: SupplierService, 
+                private pagerService: PagerService, 
+                private router: Router,
+                private slimLoadingBarService:SlimLoadingBarService,
+                private notificationService: NotificationService){}
 
     ngOnInit(){
         this.getSuppliers();
@@ -69,20 +76,15 @@ export class SupplierListComponent implements OnInit, OnDestroy{
     }
 
     getSuppliers(){
+        this.slimLoadingBarService.start();
         this.suppService.getSuppliers()
                                 .subscribe( 
-                                                result => { 
-                                                    console.log(result.suppliers);
-                                                    this.suppLoadError='';
-                                                    this.suppliers = result.suppliers;
-                                                },
-                                                error => {
-                                                    console.log(error);
-                                                    this.suppLoadError = error; 
-                                                },
+                                                result => this.suppliers = result.suppliers,
+                                                error => this.notificationService.printErrorMessage(error.error),
                                                 () =>  { 
                                                     this.setPage(1);
-                                                    console.log('Done Fetching Suppliers'); 
+                                                    this.slimLoadingBarService.complete();
+                                                    this.notificationService.printSuccessMessage('Done fetching suppliers...');
                                                     }
                                             );
     }
@@ -101,19 +103,9 @@ export class SupplierListComponent implements OnInit, OnDestroy{
     removeSupplier(){
         this.suppService.removeSupplier(this.selectedSupplierId)
                                 .subscribe( 
-                                                result => { 
-                                                    console.log(result);
-                                                    //this.catLoadError = '';
-                                                    //this.catRemoveSuccess=result.success;
-                                                },
-                                                error => {
-                                                    console.log(error);
-                                                    //this.catLoadError = error;
-                                                },
-                                                () =>  { 
-                                                    console.log('Done Deleting Suppliers'); 
-                                                    this.getSuppliers();
-                                                    }
+                                                result => this.notificationService.printSuccessMessage(result.success),
+                                                error => this.notificationService.printErrorMessage(error.error),
+                                                () => this.getSuppliers()
                                             );
     }
 
