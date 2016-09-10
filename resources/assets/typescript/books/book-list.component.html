@@ -66,8 +66,7 @@
                         <td class="">{{book?.level?.name}}</td>
                         <td class="">{{book?.supplier?.name}}</td>
                         <td class="">{{book?.quantity}}</td>
-                        <td><img [src]="book?.image"></td>
-                        <!--<td class=""><img src="cover_images/book/1/amazon_banner.png" style="width:60px;height:100px"></td>-->
+                        <td><img [src]="book?.image" style="width:60px;height:100px"></td>
                         <td class="">
                             <select class="form-control" [(ngModel)]="actionValue[book?.id]" (click)="open(book?.id)">
                                 <option value="">Edit/Delete</option>

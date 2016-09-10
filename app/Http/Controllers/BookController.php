@@ -38,7 +38,6 @@ class BookController extends Controller
     public function index()
     {
         try{
-                //DB::connection()->setFetchMode(PDO::FETCH_ASSOC);
                 
                 if( $books = $this->book->with(['category','supplier','level'])->get() ) return response()->json(compact('books'), 200); 
                     else return response()->json(['error'=>'Error fetching book list...'], 401);
@@ -101,11 +100,12 @@ class BookController extends Controller
                         $inputs['image'] = '';
 
                         //$isSaved = with(new Book)->newInstance($inputs, $request->get('id') )->save();
-                        Book::updateOrCreate( ['id' => $request->get('id')], $inputs );
+                        $savedBook = Book::updateOrCreate( ['id' => $request->get('id')], $inputs );
 
-                        if($request->get('image') != ''){
+                        if($request->file('image')){
 
-                            $bookId  = DB::getPdo()->lastInsertId();
+                            //$bookId  = DB::getPdo()->lastInsertId();
+                            $bookId = $savedBook->id;
 
                             //Create book cover images directory
                             if( !file_exists(public_path()."/cover_images/book/$bookId") ) mkdir(public_path()."/cover_images/book/$bookId", 0777, true);

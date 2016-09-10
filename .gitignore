@@ -7,6 +7,8 @@
 /public/fonts
 /public/uploads
 /public/upload-images
+/public/cover_images
+/storage/logs
 Homestead.yaml
 Homestead.json
 .env

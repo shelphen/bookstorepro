@@ -32,10 +32,12 @@ export class BookService{
                 xhr: XMLHttpRequest = new XMLHttpRequest();
 
                 if(file){
+                    console.log(file);
                     for (let i = 0; i < file.length; i++) {
                         formData.append("image", file[i], file[i].name);
                     }
                 }else{
+                    console.log('File not found...');
                     formData.append("image", "");
                 }
                 

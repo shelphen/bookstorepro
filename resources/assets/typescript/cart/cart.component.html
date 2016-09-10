@@ -21,14 +21,14 @@
 	
 	<section id="cart_items">
 		<div class="container">
-			<!--
+		
 			<div class="breadcrumbs">
-				<ol class="breadcrumb">
-				  <li><a href="#">Home</a></li>
-				  <li class="active">Book Cart</li>
+				<ol class="breadcrumb" style="visibility:hidden">
+				  <li [hidden]="true"><a href="#">Home</a></li>
+				  <li [hidden]="true" class="active">Book Cart</li>
 				</ol>
 			</div>
-			-->
+		
 			<h2 class="title text-center">Sales</h2>
 
 			<div class="table-responsive cart_info col-md-6" style="border:none;margin-top:1%">
@@ -61,7 +61,7 @@
 						<tr *ngFor="let item of items; let i = index">
 
 							<td class="cart_product">
-								<img [src]="item?.image" alt="">
+								<img [src]="item?.image" alt="" style="width:60px;height:100px">
 							</td>
 							<td class="">
 								<p>{{item?.title}}</p>
