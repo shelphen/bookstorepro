@@ -72,8 +72,13 @@
        <script src="{{ asset('js/price-range.js') }}"></script>
        <script src="{{ asset('js/jquery.prettyPhoto.js') }}"></script>
        <script src="{{ asset('js/underscore-min.js') }}"></script>
+       <script src="{{ asset('js/loader.js') }}"></script>
        <script src="{{ asset('js/ng-modal.js') }}"></script>
        <script src="{{ asset('js/ng2-bs3-modal.js') }}"></script>-->
        <script src="{{ asset('js/main.js') }}"></script>
+        <script>  
+        !important: You want to give this variable(var googleLoaded = false;). This is used to run multiple chart in your jade.
+            var googleLoaded = false;
+        </script>
     </body>
 </html>

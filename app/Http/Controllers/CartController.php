@@ -19,6 +19,7 @@ class CartController extends Controller
 
     public function __construct(Book $book){
         $this->book = $book;
+        $this->middleware('jwt.auth', []);
     }
     /**
      * Display a listing of the resource.
@@ -31,9 +32,9 @@ class CartController extends Controller
         try{
  
                 $books = Book::with([
-                                        'category' => function($q) use($request) { $q->where('name','like','%'.$request->get('search').'%'); },
-                                        'supplier' => function($q) use($request) { $q->where('name','like','%'.$request->get('search').'%'); },
-                                        'level' => function($q) use($request) { $q->where('name','like','%'.$request->get('search').'%'); }
+                                        'category' => function($q) use($request) { $q->where('name','like','%'.$request->input('search').'%'); },
+                                        'supplier' => function($q) use($request) { $q->where('name','like','%'.$request->input('search').'%'); },
+                                        'level' => function($q) use($request) { $q->where('name','like','%'.$request->input('search').'%'); }
                                     ])
                                     ->where('title','like', '%'.$request->input('search').'%' )
                                     ->orWhere('author','like', '%'.$request->input('search').'%' )
@@ -67,7 +68,17 @@ class CartController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        try{
+            \Log::info($request->all());
+            return response()->json(['success' => 'Book sale recorded successfully..'], 200);
+                //else return response()->json(['error'=>'Error recording book sale...'], 401);
+            
+
+        }catch(\Exception $e) {
+            Log::error("Exception caught, filename: " . $e->getFile() . " on line: " . $e->getLine());
+            Log::error($e->getMessage());
+            return response()->json(["error" => "Something unusual happened"], 500);
+        }
     }
 
     /**

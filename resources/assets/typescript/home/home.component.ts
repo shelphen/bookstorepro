@@ -13,7 +13,9 @@ export class HomeComponent implements OnInit, OnDestroy{
 
     ngOnDestroy(){}
 
-    route(path){
+    route(event, path){
+        console.log(event);
+        //console.log(path);
         this.router.navigate([path]);
     }
 

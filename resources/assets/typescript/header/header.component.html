@@ -6,10 +6,10 @@
                     <div class="contactinfo">
                         <ul class="nav navbar-nav collapse navbar-collapse" *ngIf="isLoggedIn">
                             <li><a [routerLink]="['home']" class="active">Home</a></li>
-                            <li class="dropdown" style="border:2px solid white"><a [routerLink]="['books']">Books<i class="fa fa-angle-down"></i></a>
-                                <ul role="menu" class="sub-menu" style="padding:0px;border:2px solid yellow !important">
-                                    <li><a [routerLink]="['books/list']" style="width:100%;border:2px solid black !important">View Books</a></li>
-                                    <li><a [routerLink]="['books/add/1']" style="width:100%;border:2px solid black !important">Add Book</a></li>  
+                            <li class="dropdown" style=""><a [routerLink]="['books']">Books<i class="fa fa-angle-down"></i></a>
+                                <ul role="menu" class="sub-menu" style="padding:0px !important">
+                                    <li><a [routerLink]="['books/list']" style="width:100% !important">View Books</a></li>
+                                    <li><a [routerLink]="['books/add/0']" style="width:100% !important">Add Book</a></li>  
                                 </ul>
                             </li> 
                             <li class="dropdown"><a [routerLink]="['categories/list']">Categories<i class="fa fa-angle-down"></i></a>

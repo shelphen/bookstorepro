@@ -90,7 +90,7 @@ export class BookListComponent implements OnInit, OnDestroy{
                                                 },
                                                 error => {
                                                     //this.bookLoadError = error.error;
-                                                    this.notificationService.printErrorMessage(error.error); 
+                                                    this.notificationService.printErrorMessage(error.error,1); 
                                                 },
                                                 () =>  { 
                                                     this.setPage(1);
@@ -110,19 +110,14 @@ export class BookListComponent implements OnInit, OnDestroy{
     removeBook(){
         this.bookService.removeBook(this.selectedBookId)
                                 .subscribe( 
-                                                result => { 
-                                                    console.log(result);
-                                                    //this.catLoadError = '';
-                                                    //this.catRemoveSuccess=result.success;
-                                                },
-                                                error => {
-                                                    console.log(error);
-                                                    //this.catLoadError = error;
-                                                },
-                                                () =>  { 
-                                                    console.log('Done Deleting Book'); 
-                                                    this.getBooks();
-                                                    }
+                                                result => this.notificationService.printSuccessMessage(result.success),
+                                                error => this.notificationService.printErrorMessage(error.error),
+                                                () =>  {
+                                                            //let dis = this;
+                                                            //setTimeout(function() {
+                                                                this.getBooks();
+                                                            //}, 5000);
+                                                        }
                                             );
     }
 
@@ -136,22 +131,6 @@ export class BookListComponent implements OnInit, OnDestroy{
 
         let route = '/books/add/' + this.selectedBookId;
         this.router.navigate([ route ]); 
-    }
-
-    startLoading() {
-        this.notificationService.printErrorMessage('Loading...');
-        // We can listen when loading will be completed 
-        //this.slimLoadingBarService.start(() => {
-            //console.log('Loading complete');
-        //});
-        this.slimLoadingBarService.start();
-        setTimeout(() => {
-            this.slimLoadingBarService.complete();
-            this.notificationService.printSuccessMessage('Loading Complete...');
-            this.notificationService.printLogMessage('Logging Loading Complete...');
-        }, 5000);
-
-        this.notificationService.openConfirmationDialog('Open Dialog Box', () =>{});
     }
 
     ngOnDestroy(){

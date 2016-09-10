@@ -76,7 +76,7 @@ class BookController extends Controller
 
                 try {
                         //Log::info(php_ini_loaded_file());
-                        $inputs = $request->all();
+                       $inputs = $request->all();
 
                        $quantity = 0;
                        $number_of_boxes = 0;
