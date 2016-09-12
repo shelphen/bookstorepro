@@ -67,11 +67,11 @@ export class AuthService {
   }
 
   getLoggedInUserDetails(){
-      return JSON.parse( localStorage.getItem('bs_auth_user') );
+      if(localStorage.getItem('bs_auth_user')) return JSON.parse( localStorage.getItem('bs_auth_user') );else return {};
   }
 
   getUserToken(){
-      return JSON.parse( localStorage.getItem('auth_token') );
+      if(localStorage.getItem('auth_token'))return JSON.parse( localStorage.getItem('auth_token') );else return {};
   }
 
   setTokenStorage(token){

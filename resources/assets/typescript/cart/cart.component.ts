@@ -27,7 +27,7 @@ export class CartComponent implements OnInit, OnDestroy{
 
     private cartList: any = [];
 
-    private cashReceived: number;
+    private cashReceived: any;
 
     constructor(private cartService: CartService, changeDetectorRef: ChangeDetectorRef, private notificationService: NotificationService){
 
@@ -90,6 +90,7 @@ export class CartComponent implements OnInit, OnDestroy{
     }
 
     addToCart(index){
+        this.cashReceived=null;
         let _dis = this;
         _.each(this.items, function( item: any, i ) { 
             if(i === index ) {
@@ -103,6 +104,7 @@ export class CartComponent implements OnInit, OnDestroy{
 
     removeFromCart(index){
         this.cartList.splice(index,1);
+        this.cashReceived=null;
     }
 
     get cartTotal(){
@@ -130,8 +132,10 @@ export class CartComponent implements OnInit, OnDestroy{
                                                 (result:any) => {
                                                     this.notificationService.printSuccessMessage(result.success, 1);
                                                 },
-                                                error => this.notificationService.printErrorMessage(error.error),
-                                                () => {}
+                                                error => {
+                                                    //console.log(JSON.parse(error).error);
+                                                    this.notificationService.printErrorMessage(error,1);
+                                                }
                                             );
     }
 

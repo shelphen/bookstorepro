@@ -69,7 +69,27 @@ class CartController extends Controller
     public function store(Request $request)
     {
         try{
-            \Log::info($request->all());
+            
+
+            $books = collect( collect( $request->all() )->get('items') )//Get contents using items key
+                                                        ->pluck('id','cart_quantity')//Get only id and cart_quantity
+                                                        ->toArray();//Convert to array
+
+            try{
+
+                $filtered = $this->book->whereIn('id', array_values($books) )->get()->filter(function ($value, $key) use($books) {
+                            if(array_search($value->id, $books) > $value->quantity)
+                                throw new \Exception( "The quanity specified for the book ". strtoupper($value->title) ." is more than the items in stock[ {$value->quantity} ] for the product", 1);
+                            return $value;
+                        });
+
+            }catch(\Exception $e){
+                return response()->json(["error" => $e->getMessage()], 422);
+            }
+
+            \Log::info( $filtered );
+             
+            
             return response()->json(['success' => 'Book sale recorded successfully..'], 200);
                 //else return response()->json(['error'=>'Error recording book sale...'], 401);
             
@@ -79,6 +99,12 @@ class CartController extends Controller
             Log::error($e->getMessage());
             return response()->json(["error" => "Something unusual happened"], 500);
         }
+    }
+
+    private function myCollect($var){
+        collect($var);
+
+        return $this;
     }
 
     /**

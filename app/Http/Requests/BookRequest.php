@@ -36,7 +36,7 @@ class BookRequest extends Request
                     'number_of_boxes' => '',
                     'quantity' => 'required',
                     'description' => '',
-                    'image' => ''
+                    'image' => 'mimes:jpeg,bmp,png|size:2000'
                 ];
     }
 }

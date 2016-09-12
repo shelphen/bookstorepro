@@ -49,9 +49,9 @@ export class CartService{
 
     private handleError (error: any) {
 
-        console.log(error);
+        //let error = JSON.parse(error);
         let _dis = this;
-        if( ['user_not_found','token_expired','token_invalid','token_absent'].indexOf( error._body.error ) ){
+        if( ['user_not_found','token_expired','token_invalid','token_absent'].indexOf( JSON.parse(error._body).error ) > -1 ){
                  console.log('Testing cleanup');
                 //_dis.authService.adam();
                 _dis.authService.cleanup();
@@ -61,9 +61,9 @@ export class CartService{
         }
 
         // In a real world app, we might use a remote logging infrastructure // We'd also dig deeper into the error to get a better message
-        let errMsg = (error.message) ? error.message :
+        let errMsg = (JSON.parse(error._body).error) ? JSON.parse(error._body).error :
             error.status ? `${error.status} - ${error.statusText}` : 'Server error';
-        console.error(errMsg); // log to console instead
+        //console.error(errMsg); // log to console instead
         return Observable.throw(errMsg);
 
     }
