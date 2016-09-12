@@ -67,11 +67,11 @@ export class AuthService {
   }
 
   getLoggedInUserDetails(){
-      if(localStorage.getItem('bs_auth_user')) return JSON.parse( localStorage.getItem('bs_auth_user') );else return {};
+      if( !!localStorage.getItem('bs_auth_user') ) return JSON.parse( localStorage.getItem('bs_auth_user') ); else return {};
   }
 
   getUserToken(){
-      if(localStorage.getItem('auth_token'))return JSON.parse( localStorage.getItem('auth_token') );else return {};
+      if( !!localStorage.getItem('auth_token') ) return JSON.parse( localStorage.getItem('auth_token') ); else return {};
   }
 
   setTokenStorage(token){
@@ -83,11 +83,11 @@ export class AuthService {
   }
 
   removeTokenStorage(){
-      localStorage.removeItem('auth_token');
+      if( !!localStorage.getItem('auth_token') ) localStorage.removeItem('auth_token');
   }
 
   removeUserStorage(){
-      localStorage.removeItem('bs_auth_user');
+      if( !!localStorage.getItem('bs_auth_user') ) localStorage.removeItem('bs_auth_user');
   }
 
   cleanup(){

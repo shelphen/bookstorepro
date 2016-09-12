@@ -10,6 +10,8 @@ use App\Book;
 
 use Log;
 
+use Illuminate\Support\Collection;
+
 
 
 class CartController extends Controller
@@ -150,5 +152,54 @@ class CartController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function collections(){
+
+        // 1. Sum of collection------------------------------------------------------------------
+
+        $numbers = collect([
+                    1, 2, 3, 4, 5, 6, 7, 8, 9, 10
+                ]);
+
+        $sum = $numbers->reduce(function ($sum, $number) {
+            return $sum + $number;
+        });
+        //55
+
+        $sum2 = $numbers->sum();
+        //55
+
+        // 1. Sum of collection------------------------------------------------------------------
+
+        // 2. Transform perfoms an action on an original collection.--------------------------------
+
+        $names = collect([
+            'Albert', 'Ben', 'Charles', 'Dan', 'Eric', 'Xavier', 'Yuri', 'Zane'
+        ]);
+
+        $names->transform(function ($name, $key) {
+            return strlen($name);
+        });
+
+        $names->toArray();
+        //[6, 3, 7, 3, 4, 6, 4, 4,]
+
+        // 2. Transform perfoms an action on an original collection.--------------------------------
+
+        // 3. Map function iterates a collection through a callback function and performs an operation on each value--------------------------------
+
+        $names = collect([
+            'Albert', 'Ben', 'Charles', 'Dan', 'Eric', 'Xavier', 'Yuri', 'Zane'
+        ]);
+
+        $lengths = $names->map(function ($name, $key) {
+            return strlen($name);
+        });
+
+        $lengths->toArray();
+        //[6, 3, 7, 3, 4, 6, 4, 4,]
+
+        // 3. Map function iterates a collection through a callback function and performs an operation on each value--------------------------------
     }
 }
