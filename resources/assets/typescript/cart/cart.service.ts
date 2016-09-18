@@ -45,12 +45,12 @@ export class CartService{
                         .catch(this.handleError);
     }
 
-    public download() {
-
+    public download(path) {
+        
         let headers = new Headers( { 'Content-Type': 'application/json', 'Authorization': 'Bearer '  +  localStorage.getItem('auth_token') } );
         let options = new RequestOptions({ headers: headers, body: '' });
 
-        return this.http.get( '/api/receipt', options)
+        return this.http.get( `/api/receipt?path=${path}`, options)
                         .map(this.extractData)
                         .catch(this.handleError);
     }

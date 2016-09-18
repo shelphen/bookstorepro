@@ -10,6 +10,7 @@
 /public/cover_images
 /public/receipts
 /storage/logs
+/storage/logs/*
 Homestead.yaml
 Homestead.json
 .env

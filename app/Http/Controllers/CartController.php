@@ -18,6 +18,8 @@ use DB;
 
 use PDF;
 
+use Carbon\Carbon;
+
 use Illuminate\Support\Collection;
 
 
@@ -69,16 +71,6 @@ class CartController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -89,7 +81,7 @@ class CartController extends Controller
         try{
 
             collect( collect( $request->all() )->get('items') )->filter(function($value, $key){
-                 $data = collect( $value )->only(['id', 'cart_quantity','cart_total']);
+                 $data = collect( $value )->only(['id', 'cart_quantity','cart_total','sales_price','title']);
                  array_push($this->bookData, $data->all());
             });
 
@@ -136,17 +128,22 @@ class CartController extends Controller
                                                         );
                                 
                                 $book->decrement('quantity', $data['cart_quantity']);
-                                //$book->quantity = $book->quantity - $data['cart_quantity'];
                                 $book->save();//Update product quantity
-                                //DB::table('users')->decrement('votes', 5);
                             }
 
                         });
 
                 });
 
-                if(! file_exists(public_path().'/receipts'))mkdir( public_path().'/receipts' );
-                $pdf = PDF::loadFile( public_path().'/receipts/template.html' )->save(public_path().'/receipts/my_stored_file.pdf')->stream('download.pdf');
+                if(! file_exists(public_path().'/receipts') ) mkdir( public_path()."/receipts" );
+                if(! file_exists(public_path().'/receipts/sale') ) mkdir( public_path()."/receipts/sale" );
+                if(! file_exists(public_path()."/receipts/sale/{$saleId}") ) mkdir( public_path()."/receipts/sale/{$saleId}" );
+
+                $storagePath = public_path()."/receipts/sale/{$saleId}/{$saleId}.pdf";
+
+                $templatePath = public_path().'/receipts/template.html';
+
+                if( $this->generateReceipt( $this->bookData ) ) $this->savePdf( public_path().'/receipts/template.html', $storagePath );
 
             } catch (Exception $e) {
                     DB::rollback();
@@ -157,7 +154,13 @@ class CartController extends Controller
 
             DB::commit();
 
-            return response()->json(['success' => 'Book sale recorded successfully..'], 200);
+            return response()->json(
+                                        [
+                                            'success' => 'Book sale recorded successfully. A sales receipt will be generated shortly.',
+                                            'receipt_path' => $storagePath
+                                        ], 
+                                        200
+                                    );
             
 
         }catch(\Exception $e) {
@@ -168,320 +171,124 @@ class CartController extends Controller
         }
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
-    }
-
-    public function collections(){
-
-        // 1. Sum of collection------------------------------------------------------------------
-
-        $numbers = collect([
-                    1, 2, 3, 4, 5, 6, 7, 8, 9, 10
-                ]);
-
-        $sum = $numbers->reduce(function ($sum, $number) {
-            return $sum + $number;
-        });
-        //55
-
-        $sum2 = $numbers->sum();
-        //55
-
-        // 1. Sum of collection------------------------------------------------------------------
-
-        // 2. Transform perfoms an action on an original collection.--------------------------------
-
-        $names = collect([
-            'Albert', 'Ben', 'Charles', 'Dan', 'Eric', 'Xavier', 'Yuri', 'Zane'
-        ]);
-
-        $names->transform(function ($name, $key) {
-            return strlen($name);
-        });
-
-        $names->toArray();
-        //[6, 3, 7, 3, 4, 6, 4, 4,]
-
-        // 2. Transform perfoms an action on an original collection.--------------------------------
-
-        // 3. Map function iterates a collection through a callback function and performs an operation on each value--------------------------------
-
-        $names = collect([
-            'Albert', 'Ben', 'Charles', 'Dan', 'Eric', 'Xavier', 'Yuri', 'Zane'
-        ]);
-
-        $lengths = $names->map(function ($name, $key) {
-            return strlen($name);
-        });
-
-        $lengths->toArray();
-        //[6, 3, 7, 3, 4, 6, 4, 4,]
-
-        // 3. Map function iterates a collection through a callback function and performs an operation on each value--------------------------------
-    }
-
-    private function template(){
+    private function generateReceipt(
+                                        $cart,
+                                        $customerName = 'NIL',
+                                        $customerEmail = 'NIL', 
+                                        $companyName = 'Holy Child', 
+                                        $companyWebsite = 'www.holychildacademy.org', 
+                                        $companyEmail = 'holychildac@gmail.com',
+                                        $paymentType = 'Cash'
+                                    ){
         
-        $template = '<!doctype html>
-                        <html>
-                        <head>
-                            <meta charset="utf-8">
-                            <title>A simple, clean, and responsive HTML invoice template</title>
-                            
-                            <style>
-                            .invoice-box{
-                                max-width:800px;
-                                margin:auto;
-                                padding:30px;
-                                border:1px solid #eee;
-                                box-shadow:0 0 10px rgba(0, 0, 0, .15);
-                                font-size:16px;
-                                line-height:24px;
-                                font-family:\'Helvetica Neue\', \'Helvetica\', Helvetica, Arial, sans-serif;
-                                color:#555;
-                            }
-                            
-                            .invoice-box table{
-                                width:100%;
-                                line-height:inherit;
-                                text-align:left;
-                            }
-                            
-                            .invoice-box table td{
-                                padding:5px;
-                                vertical-align:top;
-                            }
-                            
-                            .invoice-box table tr td:nth-child(2){
-                                text-align:right;
-                            }
-                            
-                            .invoice-box table tr.top table td{
-                                padding-bottom:20px;
-                            }
-                            
-                            .invoice-box table tr.top table td.title{
-                                font-size:45px;
-                                line-height:45px;
-                                color:#333;
-                            }
-                            
-                            .invoice-box table tr.information table td{
-                                padding-bottom:40px;
-                            }
-                            
-                            .invoice-box table tr.heading td{
-                                background:#eee;
-                                border-bottom:1px solid #ddd;
-                                font-weight:bold;
-                            }
-                            
-                            .invoice-box table tr.details td{
-                                padding-bottom:20px;
-                            }
-                            
-                            .invoice-box table tr.item td{
-                                border-bottom:1px solid #eee;
-                            }
-                            
-                            .invoice-box table tr.item.last td{
-                                border-bottom:none;
-                            }
-                            
-                            .invoice-box table tr.total td:nth-child(2){
-                                border-top:2px solid #eee;
-                                font-weight:bold;
-                            }
-                            
-                            @media only screen and (max-width: 600px) {
-                                .invoice-box table tr.top table td{
-                                    width:100%;
-                                    display:block;
-                                    text-align:center;
-                                }
-                                
-                                .invoice-box table tr.information table td{
-                                    width:100%;
-                                    display:block;
-                                    text-align:center;
-                                }
-                            }
-                            </style>
-                        </head>
+        $logoPath = public_path()."/images/home/gallery1.jpg";
 
-                        <body>
-                            <div class="invoice-box">
-                                <table cellpadding="0" cellspacing="0">
-                                    <tr class="top">
-                                        <td colspan="2">
-                                            <table>
-                                                <tr>
-                                                    <td class="title">
-                                                        <img src="http://nextstepwebs.com/images/logo.png" style="width:100%; max-width:300px;">
-                                                    </td>
-                                                    
-                                                    <td>
-                                                        Invoice #: 123<br>
-                                                        Created: January 1, 2015<br>
-                                                        Due: February 1, 2015
-                                                    </td>
-                                                </tr>
-                                            </table>
-                                        </td>
-                                    </tr>
-                                    
-                                    <tr class="information">
-                                        <td colspan="2">
-                                            <table>
-                                                <tr>
-                                                    <td>
-                                                        Next Step Webs, Inc.<br>
-                                                        12345 Sunny Road<br>
-                                                        Sunnyville, TX 12345
-                                                    </td>
-                                                    
-                                                    <td>
-                                                        Acme Corp.<br>
-                                                        John Doe<br>
-                                                        john@example.com
-                                                    </td>
-                                                </tr>
-                                            </table>
-                                        </td>
-                                    </tr>
-                                    
-                                    <tr class="heading">
-                                        <td>
-                                            Payment Method
-                                        </td>
-                                        
-                                        <td>
-                                            Check #
-                                        </td>
-                                    </tr>
-                                    
-                                    <tr class="details">
-                                        <td>
-                                            Check
-                                        </td>
-                                        
-                                        <td>
-                                            1000
-                                        </td>
-                                    </tr>
-                                    
-                                    <tr class="heading">
-                                        <td>
-                                            Item
-                                        </td>
-                                        
-                                        <td>
-                                            Price
-                                        </td>
-                                    </tr>
-                                    
-                                    <tr class="item">
-                                        <td>
-                                            Website design
-                                        </td>
-                                        
-                                        <td>
-                                            $300.00
-                                        </td>
-                                    </tr>
-                                    
-                                    <tr class="item">
-                                        <td>
-                                            Hosting (3 months)
-                                        </td>
-                                        
-                                        <td>
-                                            $75.00
-                                        </td>
-                                    </tr>
-                                    
-                                    <tr class="item last">
-                                        <td>
-                                            Domain name (1 year)
-                                        </td>
-                                        
-                                        <td>
-                                            $10.00
-                                        </td>
-                                    </tr>
-                                    
-                                    <tr class="total">
-                                        <td></td>
-                                        
-                                        <td>
-                                        Total: $385.00
-                                        </td>
-                                    </tr>
-                                </table>
-                            </div>
-                        </body>
-                        </html>';
+        $receiptDate = Carbon::now();
 
-                return $template;
+        $template = '<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+                    <!-- saved from url=(0041)http://mygreenhat.com/sample_invoice.html -->
+                    <html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+                    <title>Sales Receipt</title>
+                    <style type="text/css">
+                    <!--
+                    body {font-family:Tahoma;}
+                    img {border:0;}
+                    #page {width:800px;margin:0 auto;padding:15px;}
+                    #logo {float:left;margin:0;}
+                    #address {height:181px;margin-left:250px;}
+                    table {width:100%;}
+                    td {padding:5px;}
+                    tr.odd {background:#e1ffe1;}
+                    -->
+                    </style>
+                    </head>';
+
+        $template .= '<body><div id="page"><div id="logo">';
+
+        $template .= "<a href='{$companyWebsite}'><img src='{$logoPath}'></a>";
+        $template .= '</div><!--end logo--><div id="address">';
+
+        $template .=   "<p>{$companyName}<br>";
+
+        $template .=   "<a href='mailto:{$companyEmail}'>{$companyEmail}</a>";
+
+        $template .=   "<br><br>Transaction # xxx<br>Created on {$receiptDate}<br></p></div><!--end address-->";
+
+        $template .=   '<div id="content"><p><strong>Customer Details</strong><br>';
+
+        $template .=   "Name: {$customerName}<br> Email: {$customerEmail}<br> Payment Type: {$paymentType}</p>";
+        
+        $template .=   '<hr><table><tbody>
+                    <tr>
+                        <td><strong>Description</strong></td>
+                        <td><strong>Qty</strong></td>
+                        <td><strong>Unit Price</strong></td>
+                        <td><strong>Amount</strong></td>
+                    </tr>';
+
+        $num = 0; $total = 0; $myClass = 'odd';
+
+        foreach ($cart as $product) {
+
+            $num += 1; $total += (int)$product['cart_total'];
+
+            if($num%2 == 0) $myClass = 'even';else $myClass = 'odd';
+
+            $template .= "<tr class='{$myClass}'>
+                        <td>{$product['title']}</td>
+                        <td>{$product['cart_quantity']}</td>
+                        <td>{$product['sales_price']}</td>
+                        <td>{$product['cart_total']}</td>
+                     </tr>";
+        }           
+
+        $template .= "  <tr><td>&nbsp;</td><td>&nbsp;</td><td><strong>Total</strong></td>
+                    <td><strong>{$total}</strong></td></tr>
+                    </tbody>
+                    </table>
+                        <hr>
+                        <p>
+                        Thank you for your order!  This transaction will appear on your billing statement as {$customerName}.<br>
+                        If you have any questions, please feel free to contact us at <a href=mailto:{$companyEmail}'>{$companyEmail}</a>.
+                        </p><hr><p>
+                        </p><center><small>This communication is for the exclusive use of the addressee and may contain proprietary, confidential or privileged information. 
+                        If you are not the intended recipient any use, copying, disclosure, dissemination or distribution is strictly prohibited.
+                        <br><br>
+                        © {$companyName} All Rights Reserved
+                        </small></center>
+                        <p></p>
+                    </div><!--end content-->
+                    </div><!--end page-->
+
+                    </body></html>";
+        
+        if( $handle = @fopen(public_path().'/receipts/template.html','w') ){
+            @fwrite($handle, $template);
+            @fclose($handle);
+        }else{
+            throw new Exception("Error writing receipt data...", 1);
+            return false;
+        }
+        
+        return true;
+    }
+
+    private function savePdf($template, $storagePath){
+
+        PDF::loadFile( $template )->save( $storagePath );
+
     }
 
     public function download(Request $request){
         try{
 
-            $path = public_path().'/receipts/my_stored_file.pdf';
+            $path = $request->get('path');
 
             if(!file_exists($path)) return response()->json( ['error'=>'File not found...'] , 422 );
 
             $file = base64_encode( file_get_contents($path) );
 
-            //return response()->file($path);
-
-            //return response()->download($path);
-
             return response()->json( compact('file'), 200 );
-                                //->header('Content-Type', 'application/pdf');
 
         }catch(\Exception $e){
             Log::error("Exception caught, filename: " . $e->getFile() . " on line: " . $e->getLine());

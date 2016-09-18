@@ -133,10 +133,10 @@ export class CartComponent implements OnInit, OnDestroy{
         this.cartService.checkout(cartObj).subscribe( 
                                                 (result:any) => {
                                                     this.notificationService.printSuccessMessage(result.success, 1);
+                                                    var _dis = this;
+                                                    setTimeout(function() {_dis.downloadReceipt( result.receipt_path );}, 4000);
                                                 },
-                                                error => {
-                                                    this.notificationService.printErrorMessage(error,1);
-                                                },
+                                                error => this.notificationService.printErrorMessage(error,1),
                                                 () => {
                                                     this.cartList = [];
                                                     this.cashReceived=null;
@@ -144,28 +144,23 @@ export class CartComponent implements OnInit, OnDestroy{
                                             );
     }
 
-    public download() {
+    public downloadReceipt(filePath) {
 
-        this.pending = true;
-        this.cartService.download()
+        //this.notificationService.printLogMessage('Generating sales receipt.. Please wait',1);
+        //this.pending = true;
+        this.cartService.download(filePath)
                             .subscribe(
-                                        data => {
-                                                    console.log(data.file);
-                                                    this.downloadFile(data.file);
-                                                },
-                                        error => {
-                                            this.notificationService.printErrorMessage(error, 1);
-                                            this.pending = false;
-                                        },
+                                        data => this.printReceipt(data.file),
+                                        error => this.notificationService.printErrorMessage(error, 1),
                                         () => {
-                                            this.pending = false;
-                                            this.notificationService.printSuccessMessage('File downloaded successfully...', 1);
+                                            //this.pending = false;
+                                            //this.notificationService.printSuccessMessage('File downloaded successfully...', 1);
                                         }
                                     );
 
     }
 
-    downloadFile(data: any){
+    printReceipt(data: any){
 
         let byteCharacters = atob(data);//decode a base64-encoded string
 
