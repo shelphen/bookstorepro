@@ -8,6 +8,7 @@
 /public/uploads
 /public/upload-images
 /public/cover_images
+/public/receipts
 /storage/logs
 Homestead.yaml
 Homestead.json

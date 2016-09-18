@@ -30,7 +30,7 @@ export class NotificationService {
     /*
     Prints a success message using the alertify.js lib
     */
-    printSuccessMessage(message: string, maxLog: number = 2) {
+    printSuccessMessage(message: string, maxLog: number = 1) {
  
         this._notifier.success(message).maxLogItems(maxLog);
     }
@@ -38,14 +38,14 @@ export class NotificationService {
     /*
     Prints an error message using the alertify.js lib
     */
-    printErrorMessage(message: string, maxLog: number = 2) {
+    printErrorMessage(message: string, maxLog: number = 1) {
         this._notifier.error(message).maxLogItems(maxLog);
     }
 
     /*
     Log an error message
     */
-    printLogMessage(message: string, maxLog: number = 2){
+    printLogMessage(message: string, maxLog: number = 1){
         this._notifier
                 //.reset()
                 .maxLogItems(maxLog)

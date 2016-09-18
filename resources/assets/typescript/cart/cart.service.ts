@@ -5,6 +5,8 @@ import { AuthService } from '../login/auth.service';
 import { LocalStorage, WEB_STORAGE_PROVIDERS } from "h5webstorage";
 import { Http, Headers, Response, RequestOptions,URLSearchParams, Jsonp } from '@angular/http';
 
+//let fileSaver = require('filesaver.js');
+
 @Injectable()
 export class CartService{
 
@@ -43,6 +45,16 @@ export class CartService{
                         .catch(this.handleError);
     }
 
+    public download() {
+
+        let headers = new Headers( { 'Content-Type': 'application/json', 'Authorization': 'Bearer '  +  localStorage.getItem('auth_token') } );
+        let options = new RequestOptions({ headers: headers, body: '' });
+
+        return this.http.get( '/api/receipt', options)
+                        .map(this.extractData)
+                        .catch(this.handleError);
+    }
+
     private extractData(res: Response) {
         return res.json() || { };
     }
@@ -50,6 +62,7 @@ export class CartService{
     private handleError (error: any) {
 
         //let error = JSON.parse(error);
+        console.log(error);
         let _dis = this;
         if( ['user_not_found','token_expired','token_invalid','token_absent'].indexOf( JSON.parse(error._body).error ) > -1 ){
                  console.log('Testing cleanup');

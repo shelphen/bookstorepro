@@ -38,6 +38,7 @@ Route::group(['prefix' => 'api'], function () {
     Route::resource('categories', 'CategoryController');
     Route::resource('levels', 'LevelController');
     Route::resource('cart', 'CartController');
+    Route::get('receipt', 'CartController@download');
 
     Route::get('logout/{id}', 'AuthenticateController@logout');
     Route::post('authenticate', 'AuthenticateController@authenticate');

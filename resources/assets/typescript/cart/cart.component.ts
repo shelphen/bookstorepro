@@ -29,6 +29,8 @@ export class CartComponent implements OnInit, OnDestroy{
 
     private cashReceived: any;
 
+    public pending:boolean = false;
+
     constructor(private cartService: CartService, changeDetectorRef: ChangeDetectorRef, private notificationService: NotificationService){
 
         //Subscribe to changes for the value of the control
@@ -133,11 +135,61 @@ export class CartComponent implements OnInit, OnDestroy{
                                                     this.notificationService.printSuccessMessage(result.success, 1);
                                                 },
                                                 error => {
-                                                    //console.log(JSON.parse(error).error);
                                                     this.notificationService.printErrorMessage(error,1);
+                                                },
+                                                () => {
+                                                    this.cartList = [];
+                                                    this.cashReceived=null;
                                                 }
                                             );
     }
+
+    public download() {
+
+        this.pending = true;
+        this.cartService.download()
+                            .subscribe(
+                                        data => {
+                                                    console.log(data.file);
+                                                    this.downloadFile(data.file);
+                                                },
+                                        error => {
+                                            this.notificationService.printErrorMessage(error, 1);
+                                            this.pending = false;
+                                        },
+                                        () => {
+                                            this.pending = false;
+                                            this.notificationService.printSuccessMessage('File downloaded successfully...', 1);
+                                        }
+                                    );
+
+    }
+
+    downloadFile(data: any){
+
+        let byteCharacters = atob(data);//decode a base64-encoded string
+
+        let byteNumbers = new Array(byteCharacters.length);
+
+        let length = byteCharacters.length;
+
+        /*
+            Each character's code point (charCode) will be the value of the byte. 
+            We can create an array of byte values by applying this using the .
+            charCodeAt method for each character in the string.
+        */
+        for (let i = 0; i < length; i++) {
+            byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+        let byteArray = new Uint8Array(byteNumbers);//Convert array of byte values into a real typed byte array
+
+        let blob = new Blob([byteArray], { type: 'application/pdf' });
+
+        let url= window.URL.createObjectURL(blob);
+
+        window.open(url);
+    }
+    
 
     ngOnInit(){}
 
