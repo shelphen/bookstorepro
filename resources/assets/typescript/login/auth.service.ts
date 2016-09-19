@@ -36,7 +36,8 @@ export class AuthService {
 
   logout() {
       
-      let userId  = this.getLoggedInUserDetails().id;
+      let user  = this.getLoggedInUserDetails() || ''; //.id;
+      let userId = (user)? JSON.parse(user).id : 0;
       let headers = new Headers( { 'Content-Type': 'application/json', 'Authorization': 'Bearer '  +  localStorage.getItem('auth_token') } );
       let options = new RequestOptions({ headers: headers, body: '' });
       let url = '/api/logout/' + userId; 
@@ -67,11 +68,13 @@ export class AuthService {
   }
 
   getLoggedInUserDetails(){
-      if( !!localStorage.getItem('bs_auth_user') ) return JSON.parse( localStorage.getItem('bs_auth_user') ); else return {};
+      //if( !!localStorage.getItem('bs_auth_user') ) return JSON.parse( 
+          return localStorage.getItem('bs_auth_user'); 
+        //); else return {};
   }
 
   getUserToken(){
-      if( !!localStorage.getItem('auth_token') ) return JSON.parse( localStorage.getItem('auth_token') ); else return {};
+      //if( !!localStorage.getItem('auth_token') ) return JSON.parse( localStorage.getItem('auth_token') ); else return {};
   }
 
   setTokenStorage(token){
