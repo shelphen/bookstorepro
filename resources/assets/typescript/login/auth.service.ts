@@ -106,9 +106,9 @@ export class AuthService {
       //let _dis = this;
       //if('_body' in error){
           //if('error' in error._body){
-              if( ['user_not_found','token_expired','token_invalid','token_absent'].indexOf( error._body.error ) > -1 ){
+              //if( ['user_not_found','token_expired','token_invalid','token_absent'].indexOf( error._body.error ) > -1 ){
                     //_dis.cleanup();
-              }
+              //}
           //}
       //}
       
