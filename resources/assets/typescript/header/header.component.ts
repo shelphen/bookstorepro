@@ -15,7 +15,10 @@ export class HeaderComponent implements OnInit, OnDestroy{
     constructor(private authService: AuthService, private router: Router){}
 
     get isLoggedIn(){
-        if(this.authService.getIsLoggedIn()) this.user = JSON.parse(this.authService.getLoggedInUserDetails());
+        if(this.authService.getIsLoggedIn()) {
+            let user = this.authService.getLoggedInUserDetails() || '';
+            this.user = JSON.parse(user);
+        }
         return this.authService.getIsLoggedIn();
     }
 
