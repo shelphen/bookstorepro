@@ -32,7 +32,9 @@ export class LoginComponent{
 
         this.authService.login(this.model)
                         .subscribe( 
-                                    result => { if (result.token) { this.token = result.token; this.loginError=''; } },
+                                    result => { 
+                                        if (result.token) this.token = result.token;
+                                    },
                                     error => this.notificationService.printErrorMessage('Login attempt failed ' + error),
                                      () =>  { 
                                          this.authService.getLoggedInUser(this.token)
@@ -41,6 +43,8 @@ export class LoginComponent{
                                                                         error =>  console.log(error)
                                                                     );
                                          this.authService.setTokenStorage(this.token);
+                                         //this.router.navigate(['/cart']);
+                                         location.reload();
                                          this.router.navigate(['/home']); 
                                         }
                                     );
