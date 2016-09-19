@@ -8,6 +8,7 @@ import { MODAL_DIRECTIVES, ModalComponent } from 'ng2-bs3-modal/ng2-bs3-modal';
 import { Router } from '@angular/router';
 import {SlimLoadingBarService, SlimLoadingBarComponent} from 'ng2-slim-loading-bar';
 import { NotificationService } from '../services/notification/notification.service';
+import { AuthService } from '../login/auth.service';
 
 @Component({
     selector: 'book-list',
@@ -59,7 +60,8 @@ export class BookListComponent implements OnInit, OnDestroy{
                 vcRef: ViewContainerRef, 
                 private router: Router, 
                 private slimLoadingBarService:SlimLoadingBarService,
-                private notificationService: NotificationService){ overlay.defaultViewContainer = vcRef; }
+                private notificationService: NotificationService,
+                private authService: AuthService){ overlay.defaultViewContainer = vcRef; }
 
     ngOnInit(){
         this.getBooks();
@@ -89,8 +91,12 @@ export class BookListComponent implements OnInit, OnDestroy{
                                                     this.books = result.books;
                                                 },
                                                 error => {
-                                                    //this.bookLoadError = error.error;
-                                                    this.notificationService.printErrorMessage(error.error,1); 
+                                                    if(error==='token_error') {
+                                                        this.authService.cleanup();
+                                                        this.router.navigate(['/login']);
+                                                    }else{
+                                                        this.notificationService.printErrorMessage(error.error,1); 
+                                                    }
                                                 },
                                                 () =>  { 
                                                     this.setPage(1);

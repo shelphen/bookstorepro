@@ -4,6 +4,7 @@ import { SupplierInterface } from './supplier.interface';
 import { REACTIVE_FORM_DIRECTIVES, FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { NotificationService } from '../services/notification/notification.service';
+import { AuthService } from '../login/auth.service';
 
 @Component({
     selector: 'supplier-add',
@@ -28,7 +29,8 @@ export class SupplierAddComponent implements OnInit, OnDestroy{
                 private _fb: FormBuilder, 
                 private router: Router, 
                 private activeRoute : ActivatedRoute,
-                private notificationService: NotificationService){}
+                private notificationService: NotificationService,
+                private authService: AuthService){}
 
     save(model: SupplierInterface, isValid: boolean) {
 
@@ -37,7 +39,14 @@ export class SupplierAddComponent implements OnInit, OnDestroy{
 
             this.suppService.saveSupplier(model, this.selectedSuppId).subscribe( 
                                 result => this.notificationService.printSuccessMessage(result.success),
-                                error => this.notificationService.printErrorMessage(error.error),
+                                error => {
+                                    if(error==='token_error') {
+                                        this.authService.cleanup();
+                                        this.router.navigate(['/login']);
+                                    }else{
+                                        this.notificationService.printErrorMessage(error);
+                                    }
+                                },
                                     () =>  { 
                                             let _dis = this;
                                             setTimeout(function(){

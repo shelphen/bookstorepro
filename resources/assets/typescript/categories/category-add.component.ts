@@ -3,6 +3,8 @@ import { CategoryService } from './category.service';
 import { CategoryInterface } from './category.interface';
 import { REACTIVE_FORM_DIRECTIVES, FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
+import { AuthService } from '../login/auth.service';
+import { NotificationService } from '../services/notification/notification.service';
 
 @Component({
     selector: 'category-add',
@@ -24,22 +26,29 @@ export class CategoryAddComponent implements OnInit, OnDestroy{
 
     private formText: string = 'Add';
     
-    constructor(private catService: CategoryService, private _fb: FormBuilder, private router: Router, private activeRoute : ActivatedRoute){}
+    constructor(
+                private catService: CategoryService, 
+                private _fb: FormBuilder, 
+                private router: Router, 
+                private activeRoute : ActivatedRoute,
+                private authService: AuthService,
+                private notificationService: NotificationService){}
 
     save(model: CategoryInterface, isValid: boolean) {
         
         // call API to save
         if(isValid){
-            this.catSaveError='';
+            //this.catSaveError='';
 
             this.catService.saveCategory(model, this.selectedCatId).subscribe( 
-                                result => { 
-                                            this.catSaveError='';
-                                            this.catSaveSuccess = result.success;  
-                                        },
+                                result => this.notificationService.printSuccessMessage(result.success),
                                 error => { 
-                                            this.catSaveSuccess='';
-                                            this.catSaveError = error; 
+                                            if(error==='token_error') {
+                                                this.authService.cleanup();
+                                                this.router.navigate(['/login']);
+                                            }else{
+                                                this.notificationService.printErrorMessage(error);
+                                            }
                                         },
                                     () =>  { 
                                             let _dis = this;

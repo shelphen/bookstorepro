@@ -32,12 +32,10 @@ export class BookService{
                 xhr: XMLHttpRequest = new XMLHttpRequest();
 
                 if(file){
-                    console.log(file);
                     for (let i = 0; i < file.length; i++) {
                         formData.append("image", file[i], file[i].name);
                     }
                 }else{
-                    console.log('File not found...');
                     formData.append("image", "");
                 }
                 
@@ -108,10 +106,9 @@ export class BookService{
     private handleError (error: any) {
         //if('_body' in error){
             //if('error' in error._body){
-                if( ['user_not_found','token_expired','token_invalid','token_absent'].indexOf( error._body.error ) ){
-                        this.authService.cleanup();
-                        location.pathname = '/login';
-                        //this.router.navigate(['/login']);
+                if( ['user_not_found','token_expired','token_invalid','token_absent'].indexOf( error._body.error ) > -1 ){
+                        let errMsg = "token_error";
+                        return Observable.throw(errMsg);
                 }
             //}
         //}

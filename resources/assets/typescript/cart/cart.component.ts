@@ -9,6 +9,8 @@ import "rxjs/add/operator/distinctUntilChanged";
 import "rxjs/add/operator/debounceTime";
 import "rxjs/add/operator/switchMap";
 import * as _ from 'underscore';
+import { Router } from '@angular/router';
+import { AuthService } from '../login/auth.service';
 
 @Component({
     selector: 'cart',
@@ -31,7 +33,12 @@ export class CartComponent implements OnInit, OnDestroy{
 
     public pending:boolean = false;
 
-    constructor(private cartService: CartService, changeDetectorRef: ChangeDetectorRef, private notificationService: NotificationService){
+    constructor(
+                private cartService: CartService, 
+                changeDetectorRef: ChangeDetectorRef, 
+                private notificationService: NotificationService, 
+                private router: Router,
+                private authService: AuthService){
 
         //Subscribe to changes for the value of the control
         changeDetectorRef.markForCheck();
@@ -45,7 +52,14 @@ export class CartComponent implements OnInit, OnDestroy{
                                             this.listItems=[];
                                             this.items = result.books;
                                         },
-                                        error => this.notificationService.printErrorMessage(error.error)
+                                        error => {
+                                                    if(error==='token_error') {
+                                                        this.authService.cleanup();
+                                                        this.router.navigate(['/login']);
+                                                    }else{
+                                                        this.notificationService.printErrorMessage(error);
+                                                    }
+                                                 }
                                     );
         
     }
@@ -136,7 +150,14 @@ export class CartComponent implements OnInit, OnDestroy{
                                                     var _dis = this;
                                                     setTimeout(function() {_dis.downloadReceipt( result.receipt_path );}, 4000);
                                                 },
-                                                error => this.notificationService.printErrorMessage(error,1),
+                                                error => {
+                                                    if(error==='token_error') {
+                                                        this.authService.cleanup();
+                                                        this.router.navigate(['/login']);
+                                                    }else{
+                                                        this.notificationService.printErrorMessage(error,1);
+                                                    }
+                                                },
                                                 () => {
                                                     this.cartList = [];
                                                     this.cashReceived=null;
@@ -151,7 +172,14 @@ export class CartComponent implements OnInit, OnDestroy{
         this.cartService.download(filePath)
                             .subscribe(
                                         data => this.printReceipt(data.file),
-                                        error => this.notificationService.printErrorMessage(error, 1),
+                                        error => {
+                                            if(error==='token_error') {
+                                                this.authService.cleanup();
+                                                this.router.navigate(['/login']);
+                                            }else{
+                                                this.notificationService.printErrorMessage(error, 1);
+                                            }
+                                        },
                                         () => {
                                             //this.pending = false;
                                             //this.notificationService.printSuccessMessage('File downloaded successfully...', 1);

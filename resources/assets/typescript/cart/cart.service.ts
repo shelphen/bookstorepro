@@ -22,16 +22,6 @@ export class CartService{
         return this.http.get(this.cartApiUrl+'?search='+term, options)
                     .map(this.extractData)
                     .catch(this.handleError);
-
-        //var search = new URLSearchParams()
-        //search.set('action', 'opensearch');
-        //search.set('search', term);
-        //search.set('format', 'json');
-        //return this.jsonp
-                    //.get('http://en.wikipedia.org/w/api.php?callback=JSONP_CALLBACK', { search })
-                    //.get(this.cartApiUrl, { search })
-                    //.map((response) => response.json()[1]);
-                    //.map((response) => response.json());
     }
 
     checkout(cart){
@@ -60,17 +50,10 @@ export class CartService{
     }
 
     private handleError (error: any) {
-
-        //let error = JSON.parse(error);
-        console.log(error);
-        let _dis = this;
+;
         if( ['user_not_found','token_expired','token_invalid','token_absent'].indexOf( JSON.parse(error._body).error ) > -1 ){
-                 console.log('Testing cleanup');
-                //_dis.authService.adam();
-                _dis.authService.cleanup();
-                console.log('User is not authenticated');
-                //location.pathname = '/login';
-                //this.router.navigate(['/login']);
+                 let errMsg = "token_error";
+                 return Observable.throw(errMsg);
         }
 
         // In a real world app, we might use a remote logging infrastructure // We'd also dig deeper into the error to get a better message

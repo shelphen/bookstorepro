@@ -91,30 +91,23 @@ export class AuthService {
   }
 
   cleanup(){
-      console.log('Started Cleaning Up');
       this.removeUserStorage();
       this.removeTokenStorage();
       this.setIsLoggedIn(false);
       this.router.navigate(['/login']);
-      console.log('Ended Cleaning Up');
       return true;
-  }
-
-  adam(){
-      console.log('My name is adam');
-      return true;
-  }  
+  } 
 
   private extractData(res: Response) {
       return res.json() || { };
   }
 
   private handleError (error: any) {
-      let _dis = this;
+      //let _dis = this;
       //if('_body' in error){
           //if('error' in error._body){
-              if( ['user_not_found','token_expired','token_invalid','token_absent'].indexOf( error._body.error ) ){
-                    _dis.cleanup();
+              if( ['user_not_found','token_expired','token_invalid','token_absent'].indexOf( error._body.error ) > -1 ){
+                    //_dis.cleanup();
               }
           //}
       //}

@@ -64,10 +64,9 @@ export class SupplierService{
     private handleError (error: any) {
 
         console.log(error);
-        if( ['user_not_found','token_expired','token_invalid','token_absent'].indexOf( error._body.error ) ){
-                this.authService.cleanup();
-                location.pathname = '/login';
-                //this.router.navigate(['/login']);
+        if( ['user_not_found','token_expired','token_invalid','token_absent'].indexOf( error._body.error ) > -1 ){
+                let errMsg = "token_error";
+                return Observable.throw(errMsg);
         }
 
         // In a real world app, we might use a remote logging infrastructure // We'd also dig deeper into the error to get a better message

@@ -175,9 +175,9 @@ class CartController extends Controller
                                         $cart,
                                         $customerName = 'NIL',
                                         $customerEmail = 'NIL', 
-                                        $companyName = 'Holy Child', 
-                                        $companyWebsite = 'www.holychildacademy.org', 
-                                        $companyEmail = 'holychildac@gmail.com',
+                                        $companyName = 'Book Store', 
+                                        $companyWebsite = 'www.bookstore.org', 
+                                        $companyEmail = 'bookstorec@gmail.com',
                                         $paymentType = 'Cash'
                                     ){
         

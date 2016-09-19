@@ -7,6 +7,7 @@ import { BookInterface } from './book.interface';
 import { REACTIVE_FORM_DIRECTIVES, FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { NotificationService } from '../services/notification/notification.service';
+import { AuthService } from '../login/auth.service';
 
 @Component({
     selector: 'book-add',
@@ -44,7 +45,8 @@ export class BookAddComponent implements OnInit, OnDestroy{
                 private levelService : LevelService,
                 private catService : CategoryService,
                 private suppService : SupplierService,
-                private notificationService: NotificationService){}
+                private notificationService: NotificationService,
+                private authService: AuthService){}
 
     save(model: BookInterface, isValid: boolean) {
 
@@ -55,15 +57,15 @@ export class BookAddComponent implements OnInit, OnDestroy{
             //if(this.uploadedFile){
 
                 this.bookService.saveBook(model, this.selectedBookId, this.uploadedFile).subscribe( 
-                                    result => { 
-                                                //this.bookSaveError='';
-                                                //this.bookSaveSuccess = result.success;
-                                                this.notificationService.printSuccessMessage(result.success);  
-                                            },
+                                    result =>this.notificationService.printSuccessMessage(result.success),
                                     error => { 
-                                                //this.bookSaveSuccess='';
-                                                //this.bookSaveError = error.error;
-                                                this.notificationService.printErrorMessage(error.error); 
+                                                console.log(error);
+                                                if(error==='token_error') {
+                                                    this.authService.cleanup();
+                                                    this.router.navigate(['/login']);
+                                                }else{
+                                                    this.notificationService.printErrorMessage(error); 
+                                                }
                                             },
                                      () =>  { 
                                                 let _dis = this;
@@ -321,12 +323,14 @@ export class BookAddComponent implements OnInit, OnDestroy{
                                         this.categories = result.categories;
                                     },
                                     error => {
-                                        console.log(error);
-                                        //this.bookCatErrors = error; 
-                                    },
-                                    () =>  { 
-                                        //console.log('Done Fetching Categories');
+                                         if(error==='token_error') {
+                                            this.authService.cleanup();
+                                            this.router.navigate(['/login']);
+                                        }else{
+                                            //this.bookCatErrors = error; 
                                         }
+                                    },
+                                    () =>  {}
                                 );
     }
 
@@ -339,12 +343,14 @@ export class BookAddComponent implements OnInit, OnDestroy{
                                         this.levels = result.levels;
                                     },
                                     error => {
-                                        console.log(error);
-                                        //this.bookCatErrors = error; 
-                                    },
-                                    () =>  { 
-                                        //console.log('Done Fetching Levels'); 
+                                        if(error==='token_error') {
+                                            this.authService.cleanup();
+                                            this.router.navigate(['/login']);
+                                        }else{
+                                            //this.bookCatErrors = error; 
                                         }
+                                    },
+                                    () =>  {}
                                 );
 
     }
@@ -353,24 +359,20 @@ export class BookAddComponent implements OnInit, OnDestroy{
 
         this.suppService.getSuppliers()
                             .subscribe( 
-                                    result => { 
-                                        console.log(result);
-                                        this.suppliers = result.suppliers;
-                                        console.log(this.suppliers);
-                                    },
+                                    result =>this.suppliers = result.suppliers,
                                     error => {
-                                        console.log(error);
-                                        //this.bookCatErrors = error; 
-                                    },
-                                    () =>  { 
-                                        //console.log('Done Fetching Suppliers'); 
+                                        if(error==='token_error') {
+                                            this.authService.cleanup();
+                                            this.router.navigate(['/login']);
+                                        }else{
+                                            //this.bookCatErrors = error; 
                                         }
+                                    },
+                                    () =>  {}
                                 );
 
     }
 
-    ngOnDestroy(){
-        //
-    }
+    ngOnDestroy(){}
 
 }

@@ -6,6 +6,7 @@ import { MODAL_DIRECTIVES, ModalComponent } from 'ng2-bs3-modal/ng2-bs3-modal';
 import { Router } from '@angular/router';
 import {SlimLoadingBarService, SlimLoadingBarComponent} from 'ng2-slim-loading-bar';
 import { NotificationService } from '../services/notification/notification.service';
+import { AuthService } from '../login/auth.service';
 
 @Component({
     selector: 'category-list',
@@ -62,7 +63,8 @@ export class CategoryListComponent implements OnInit, OnDestroy{
                 private pagerService: PagerService, 
                 private router: Router,
                 private slimLoadingBarService:SlimLoadingBarService,
-                private notificationService: NotificationService){}
+                private notificationService: NotificationService,
+                private authService: AuthService){}
 
     ngOnInit(){
         this.getCategories();
@@ -83,7 +85,14 @@ export class CategoryListComponent implements OnInit, OnDestroy{
         this.catService.getCategories()
                                 .subscribe( 
                                                 result => this.categories = result.categories,
-                                                error => this.notificationService.printErrorMessage(error.error),
+                                                error => {
+                                                    if(error==='token_error') {
+                                                        this.authService.cleanup();
+                                                        this.router.navigate(['/login']);
+                                                    }else{
+                                                        this.notificationService.printErrorMessage(error);
+                                                    }
+                                                },
                                                 () =>  { 
                                                     this.setPage(1);
                                                     this.slimLoadingBarService.complete();
@@ -107,7 +116,14 @@ export class CategoryListComponent implements OnInit, OnDestroy{
         this.catService.removeCategory(this.selectedCategoryId)
                                 .subscribe( 
                                                 result => this.notificationService.printSuccessMessage(result.success),
-                                                error => this.notificationService.printErrorMessage(error.error),
+                                                error => {
+                                                    if(error==='token_error') {
+                                                        this.authService.cleanup();
+                                                        this.router.navigate(['/login']);
+                                                    }else{
+                                                        this.notificationService.printErrorMessage(error);
+                                                    }
+                                                },
                                                 () => this.getCategories()
                                             );
     }

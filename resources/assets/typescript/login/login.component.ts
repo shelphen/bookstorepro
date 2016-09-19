@@ -2,6 +2,7 @@ import { Component, EventEmitter, Output, OnInit } from '@angular/core';
 import { User } from './user';
 import { AuthService } from './auth.service';
 import { Router } from '@angular/router';
+import { NotificationService } from '../services/notification/notification.service';
 
 @Component({
     selector: 'login',
@@ -21,7 +22,7 @@ export class LoginComponent{
 
     private token: string;
 
-    constructor(private authService: AuthService,private router: Router){}
+    constructor(private authService: AuthService,private router: Router,private notificationService: NotificationService){}
     
     onLogin() { 
         //this.submitted = true;
@@ -32,7 +33,7 @@ export class LoginComponent{
         this.authService.login(this.model)
                         .subscribe( 
                                     result => { if (result.token) { this.token = result.token; this.loginError=''; } },
-                                    error => { this.loginError = 'Login attempt failed ' + error; },
+                                    error => this.notificationService.printErrorMessage('Login attempt failed ' + error),
                                      () =>  { 
                                          this.authService.getLoggedInUser(this.token)
                                                             .subscribe(
@@ -40,7 +41,7 @@ export class LoginComponent{
                                                                         error =>  console.log(error)
                                                                     );
                                          this.authService.setTokenStorage(this.token);
-                                         this.router.navigate(['/books/list']); 
+                                         this.router.navigate(['/home']); 
                                         }
                                     );
 

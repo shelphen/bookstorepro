@@ -4,6 +4,8 @@ import { LevelInterface } from './level.interface';
 import { REACTIVE_FORM_DIRECTIVES, FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { NotificationService } from '../services/notification/notification.service';
+import { AuthService } from '../login/auth.service';
+
 
 @Component({
     selector: 'level-add',
@@ -28,17 +30,25 @@ export class LevelAddComponent implements OnInit, OnDestroy{
                 private _fb: FormBuilder, 
                 private router: Router,
                 private activeRoute : ActivatedRoute,
-                private notificationService: NotificationService){}
+                private notificationService: NotificationService,
+                private authService: AuthService){}
 
     save(model: LevelInterface, isValid: boolean) {
 
         //call API to save
         if(isValid){
-            this.levelSaveError='';
+            //this.levelSaveError='';
 
             this.levelService.saveLevel(model, this.selectedLevelId).subscribe( 
                                 result => this.notificationService.printSuccessMessage(result.success),
-                                error => this.notificationService.printErrorMessage(error.error),
+                                error => {
+                                            if(error==='token_error') {
+                                                this.authService.cleanup();
+                                                this.router.navigate(['/login']);
+                                            }else{
+                                                this.notificationService.printErrorMessage(error);
+                                            }
+                                },
                                     () =>  { 
                                             let _dis = this;
                                             setTimeout(function(){
@@ -49,7 +59,7 @@ export class LevelAddComponent implements OnInit, OnDestroy{
             
 
         }else{
-            this.levelSaveError = 'Please fill all required fields';
+            this.notificationService.printErrorMessage('Please fill all required fields');
         }
 
     }

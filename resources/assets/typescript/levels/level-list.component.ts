@@ -6,6 +6,7 @@ import { MODAL_DIRECTIVES, ModalComponent } from 'ng2-bs3-modal/ng2-bs3-modal';
 import { Router } from '@angular/router';
 import {SlimLoadingBarService, SlimLoadingBarComponent} from 'ng2-slim-loading-bar';
 import { NotificationService } from '../services/notification/notification.service';
+import { AuthService } from '../login/auth.service';
 
 @Component({
     selector: 'category-list',
@@ -59,7 +60,8 @@ export class LevelListComponent implements OnInit, OnDestroy{
                 private pagerService: PagerService,
                 private router: Router,
                 private slimLoadingBarService:SlimLoadingBarService,
-                private notificationService: NotificationService){}
+                private notificationService: NotificationService,
+                private authService: AuthService){}
 
     ngOnInit(){
         this.getLevels();
@@ -70,7 +72,14 @@ export class LevelListComponent implements OnInit, OnDestroy{
         this.levelService.getLevels()
                                 .subscribe( 
                                                 result => this.levels = result.levels,
-                                                error => this.notificationService.printErrorMessage(error.error),
+                                                error => {
+                                                    if(error==='token_error') {
+                                                        this.authService.cleanup();
+                                                        this.router.navigate(['/login']);
+                                                    }else{
+                                                        this.notificationService.printErrorMessage(error);
+                                                    }
+                                                },
                                                 () =>  { 
                                                         this.setPage(1);
                                                         this.slimLoadingBarService.complete();
@@ -104,7 +113,14 @@ export class LevelListComponent implements OnInit, OnDestroy{
         this.levelService.removeLevel(this.selectedLevelId)
                                 .subscribe( 
                                                 result => this.notificationService.printSuccessMessage(result.success),
-                                                error => this.notificationService.printErrorMessage(error.error),
+                                                error => {
+                                                    if(error==='token_error') {
+                                                        this.authService.cleanup();
+                                                        this.router.navigate(['/login']);
+                                                    }else{
+                                                        this.notificationService.printErrorMessage(error);
+                                                    }
+                                                },
                                                 () => this.getLevels()
                                             );
     }
